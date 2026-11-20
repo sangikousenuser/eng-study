@@ -191,7 +191,7 @@
       </div>
 
       <!-- 2段目：ユニット切替 & 学習モード切替 -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+      <div class="flex flex-col gap-2.5">
         <!-- ユニット選択 -->
         <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar" aria-label="ユニット選択">
           <button type="button" id="btn-unit-7" onclick="switchUnit('unit7')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
@@ -206,7 +206,7 @@
         </nav>
 
         <!-- モード選択 -->
-        <nav class="flex items-center gap-4 border-t sm:border-t-0 border-soft pt-2 sm:pt-0 overflow-x-auto no-scrollbar" aria-label="学習モード">
+        <nav class="flex items-center gap-1.5 sm:gap-5 border-t border-soft pt-2 overflow-x-auto no-scrollbar" aria-label="学習モード">
           <button type="button" id="tab-slash" onclick="switchMode('slash')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
             スラッシュ読解
           </button>
@@ -215,6 +215,9 @@
           </button>
           <button type="button" id="tab-worksheet" onclick="switchMode('worksheet')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
             プリント穴埋め
+          </button>
+          <button type="button" id="tab-card" onclick="switchMode('card')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
+            暗記カード
           </button>
         </nav>
       </div>
@@ -436,6 +439,47 @@
       </div>
 
       <div id="worksheet-container" class="space-y-4"></div>
+    </section>
+
+    <!-- =========================================================
+         モード4：暗記カードモード
+    ========================================================== -->
+    <section id="view-card" class="hidden space-y-5">
+      <!-- モード内サブバー -->
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5">
+          <div class="inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
+            <button type="button" id="card-dir-en2ja" onclick="setCardDirection('en2ja')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
+              英→日
+            </button>
+            <button type="button" id="card-dir-ja2en" onclick="setCardDirection('ja2en')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
+              日→英
+            </button>
+          </div>
+          <label class="flex items-center gap-1.5 text-muted cursor-pointer select-none">
+            <input id="card-filter-unknown" type="checkbox" onchange="onCardFilterChange()" class="w-3.5 h-3.5 rounded accent-orange-600" checked />
+            未習得のみ
+          </label>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            onclick="shuffleCardQueue()"
+            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+          >
+            シャッフル
+          </button>
+          <button
+            type="button"
+            onclick="resetCardKnown()"
+            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+          >
+            リセット
+          </button>
+        </div>
+      </div>
+
+      <div id="flashcard-area" class="space-y-4"></div>
     </section>
   </main>
 
@@ -1416,11 +1460,176 @@
       }
     };
 
+    const FLASHCARD_DATA = {
+      unit7: [
+        ["Pacific coast", "太平洋沿岸"],
+        ["length", "体長 / 長さ"],
+        ["shrink", "縮小する / 小さくなる"],
+        ["marine mammals", "海洋哺乳類"],
+        ["evidence", "証拠"],
+        ["survival rate", "生存率"],
+        ["reproductive success", "繁殖の成功"],
+        ["impact", "影響"],
+        ["food web", "食物網"],
+        ["ripple effect", "波及効果"],
+        ["paper", "論文"],
+        ["part of ~", "〜の一部"],
+        ["focus on ~", "〜に焦点をあてる"],
+        ["sentinel", "見張り役"],
+        ["Arctic", "北極圏の"],
+        ["inhabit", "生息する"],
+        ["shore", "岸"],
+        ["shallow", "浅い"],
+        ["prior", "先行する / 以前の"],
+        ["fluke", "尾（クジラの尾びれ）"],
+        ["in worse shape", "より悪い状態である"],
+        ["body size", "体長 / 体の大きさ"],
+        ["decline", "減少する / 衰退する"],
+        ["early warning sign", "早期警戒のサイン"],
+        ["co-author", "共著者"],
+        ["assistant professor", "助教授"],
+        ["estimate", "推定する"],
+        ["individual", "個体"],
+        ["analyze", "分析する"],
+        ["striking trend", "顕著な傾向"],
+        ["adult", "成体"],
+        ["reach", "達する"],
+        ["mature", "成体の / 成熟した"],
+        ["typically", "通例"],
+        ["total length", "全身 / 全長"],
+        ["decrease", "減少"],
+        ["pronounced", "顕著な"],
+        ["historically", "歴史的に"],
+        ["exceed", "上回る"],
+        ["comparable", "同等の"],
+        ["average height", "平均身長"],
+        ["plummet", "激減する"],
+        ["equivalent", "同等のもの"],
+        ["matter", "重要である"],
+        ["in general", "一般に"],
+        ["critical", "極めて重要な"],
+        ["lead author", "筆頭著者"],
+        ["researcher", "研究者"],
+        ["behavior", "行動"],
+        ["physiology", "生理機能"],
+        ["affect", "影響を与える"],
+        ["cascading effect", "連鎖的な影響"],
+        ["calf", "子（クジラ・牛などの子）"],
+        ["wean", "離乳する"],
+        ["concern", "懸念"],
+        ["migration", "移動"],
+        ["reproduction", "繁殖"],
+        ["feeding season", "摂食期"],
+        ["rely on ~", "〜に頼る"],
+        ["grow", "増加する / 成長する"],
+        ["arise", "生じる"]
+      ],
+      unit9: [
+        ["source", "情報筋"],
+        ["under certain conditions", "特定の条件下で"],
+        ["automated", "自動の"],
+        ["autonomous", "自律の"],
+        ["driverless", "運転手のいない"],
+        ["aim", "目標 / ねらう"],
+        ["current", "現在の"],
+        ["currently", "現在"],
+        ["construct", "建設する"],
+        ["square kilometer", "平方キロメートル"],
+        ["free of charge", "無料で"],
+        ["paid", "有料の"],
+        ["switch to ~", "〜に変更する"],
+        ["range", "範囲"],
+        ["expand", "拡大する"],
+        ["vehicle", "自動車 / 車両"],
+        ["public road", "公道"],
+        ["jointly funded", "共同出資の"],
+        ["in cooperation with ~", "〜と協力して"],
+        ["startup", "スタートアップ企業"],
+        ["utilize", "活用する"],
+        ["autumn", "秋"],
+        ["transport ministry", "国土交通省"],
+        ["industry ministry", "経済産業省"],
+        ["National Police Agency", "警察庁"],
+        ["operation route", "運行ルート"],
+        ["be based on ~", "〜をベースにする"],
+        ["artificial intelligence", "AI / 人工知能"],
+        ["surrounding conditions", "周囲の状況"],
+        ["prediction", "予測"],
+        ["autonomously", "自律的に"],
+        ["reason", "理由"],
+        ["temporarily", "一時的に"],
+        ["during daytime hours", "日中に"],
+        ["designated", "指定された"],
+        ["operate", "運行する / 操作する"],
+        ["passenger", "乗客"],
+        ["entrance", "入口"],
+        ["limited", "限られた"],
+        ["get in and out of ~", "〜に乗り降りする"],
+        ["profitability", "採算性"],
+        ["examine", "検証する / 調べる"],
+        ["free", "無料の"],
+        ["gradually", "段階的に"],
+        ["add a fee", "有料化する（料金を加える）"],
+        ["consider", "検討する"],
+        ["eventually", "将来的に / 最終的に"],
+        ["ride hailing service", "配車サービス"],
+        ["specific", "特定の"],
+        ["hail", "（タクシーなどを）呼ぶ"],
+        ["acronym", "頭字語"],
+        ["so-called", "いわゆる"],
+        ["element", "要素"],
+        ["next-generation", "次世代の"],
+        ["core", "核 / 中心"],
+        ["develop", "開発する"],
+        ["with each other", "互いに"],
+        ["compete", "競い合う"],
+        ["roll out", "展開する"],
+        ["overtake", "〜に先んじる / 追い抜く"],
+        ["improve", "向上させる"],
+        ["deepen", "深める"],
+        ["indispensable", "欠かせない"]
+      ],
+      unit12: [
+        ["government", "政府"],
+        ["specialized", "特化した"],
+        ["collaborate", "協力する"],
+        ["joint effort", "共同の取り組み"],
+        ["share", "共有する"],
+        ["development", "開発"],
+        ["joint use", "共同利用"],
+        ["discovery", "発見"],
+        ["intensified competition", "競争激化"],
+        ["allied country", "同盟国"],
+        ["collaboration", "協力"],
+        ["under the jurisdiction of ~", "〜の所管の"],
+        ["-affiliated", "〜系の（政府系など）"],
+        ["be led", "進められる / 率いられる"],
+        ["high-performance", "高性能の"],
+        ["be home to ~", "〜を置く場所である / 〜の本拠地である"],
+        ["a large amount of computation", "大量の計算"],
+        ["result", "結果"],
+        ["spring", "春"],
+        ["agreement", "合意"],
+        ["separately", "別々に"],
+        ["experiment", "実験"],
+        ["new material", "新素材"],
+        ["material", "素材 / 材料"],
+        ["drug discovery", "新薬開発"],
+        ["medical science", "医学"],
+        ["focus ~ on ...", "〜に力を入れる / 〜を…に集中させる"],
+        ["university", "大学"],
+        ["make ~ available", "〜を利用できるようにする"],
+        ["competitiveness", "競争力"],
+        ["strengthen", "強化する"]
+      ]
+    };
+
     /* =========================================================================
        アプリの状態管理
     ========================================================================= */
     const STORAGE_KEY_MASTERED = "slash_translation_mastered_v1";
     const STORAGE_KEY_THEME = "slash_translation_theme_v1";
+    const STORAGE_KEY_CARD_KNOWN = "flashcard_known_v1";
 
     let state = {
       currentUnit: "unit9",      // 新規追加した Unit 9 を初期表示
@@ -1440,7 +1649,13 @@
       currentQuiz: null,
       quizAnswered: false,
       quizCorrect: 0,
-      quizTotal: 0
+      quizTotal: 0,
+      cardDirection: "en2ja",    // 'en2ja' | 'ja2en'
+      cardOnlyUnknown: true,
+      cardQueue: [],
+      cardRoundTotal: 0,
+      cardFlipped: false,
+      cardKnownIds: new Set()
     };
 
     /* =========================================================================
@@ -1452,6 +1667,11 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) state.masteredIds = new Set(parsed);
+        }
+        const rawCards = localStorage.getItem(STORAGE_KEY_CARD_KNOWN);
+        if (rawCards) {
+          const parsedCards = JSON.parse(rawCards);
+          if (Array.isArray(parsedCards)) state.cardKnownIds = new Set(parsedCards);
         }
         const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
         if (savedTheme && ["paper", "sepia", "dark"].includes(savedTheme)) {
@@ -1466,6 +1686,14 @@
     function saveProgress() {
       try {
         localStorage.setItem(STORAGE_KEY_MASTERED, JSON.stringify([...state.masteredIds]));
+      } catch (err) {
+        console.warn("Storage save skipped:", err);
+      }
+    }
+
+    function saveCardKnown() {
+      try {
+        localStorage.setItem(STORAGE_KEY_CARD_KNOWN, JSON.stringify([...state.cardKnownIds]));
       } catch (err) {
         console.warn("Storage save skipped:", err);
       }
@@ -1563,6 +1791,7 @@
       updateHeaderUI();
       renderCurrentView();
       if (state.currentMode === "quiz") resetQuizPoolAndNext();
+      if (state.currentMode === "card") { buildCardQueue(); renderCardMode(); }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1571,6 +1800,7 @@
       updateHeaderUI();
       renderCurrentView();
       if (mode === "quiz") resetQuizPoolAndNext();
+      if (mode === "card") { buildCardQueue(); renderCardMode(); }
     }
 
     function setSlashLayout(layout) {
@@ -1603,7 +1833,7 @@
       });
 
       // モードタブ（下線のみでシンプルに）
-      ["slash", "quiz", "worksheet"].forEach((t) => {
+      ["slash", "quiz", "worksheet", "card"].forEach((t) => {
         const el = document.getElementById(`tab-${t}`);
         if (!el) return;
         if (state.currentMode === t) {
@@ -1617,7 +1847,11 @@
         }
       });
 
-      document.getElementById("unit-badge").textContent = `${unit.badge}（全${unit.sentences.length}文）`;
+      if (state.currentMode === "card") {
+        document.getElementById("unit-badge").textContent = `${unit.badge}（全${FLASHCARD_DATA[state.currentUnit].length}語）`;
+      } else {
+        document.getElementById("unit-badge").textContent = `${unit.badge}（全${unit.sentences.length}文）`;
+      }
       document.getElementById("unit-title-en").textContent = unit.titleEn;
       document.getElementById("unit-title-ja").textContent = unit.titleJa;
 
@@ -1626,6 +1860,14 @@
 
     function updateProgressUI() {
       const unit = UNITS_DATA[state.currentUnit];
+      if (state.currentMode === "card") {
+        const cards = FLASHCARD_DATA[state.currentUnit];
+        const known = cards.filter((_, i) => state.cardKnownIds.has(`fc-${state.currentUnit}-${i}`)).length;
+        const pct = cards.length === 0 ? 0 : Math.round((known / cards.length) * 100);
+        document.getElementById("top-progress-line").style.width = `${pct}%`;
+        document.getElementById("progress-text").textContent = `覚えた ${known} / ${cards.length}`;
+        return;
+      }
       const total = unit.sentences.length;
       const done = unit.sentences.filter((s) => state.masteredIds.has(s.id)).length;
       const pct = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -1637,9 +1879,11 @@
       document.getElementById("view-slash").classList.toggle("hidden", state.currentMode !== "slash");
       document.getElementById("view-quiz").classList.toggle("hidden", state.currentMode !== "quiz");
       document.getElementById("view-worksheet").classList.toggle("hidden", state.currentMode !== "worksheet");
+      document.getElementById("view-card").classList.toggle("hidden", state.currentMode !== "card");
 
       if (state.currentMode === "slash") renderSlashMode();
       if (state.currentMode === "worksheet") renderWorksheetMode();
+      if (state.currentMode === "card") renderCardMode();
     }
 
     /* =========================================================================
@@ -2244,6 +2488,202 @@
     }
 
     /* =========================================================================
+       モード4：暗記カードモード
+    ========================================================================= */
+    function buildCardQueue(options = {}) {
+      const cards = FLASHCARD_DATA[state.currentUnit];
+      let ids = cards.map((_, i) => `fc-${state.currentUnit}-${i}`);
+      const onlyUnknown = options.ignoreFilter ? false : state.cardOnlyUnknown;
+      if (onlyUnknown) ids = ids.filter((id) => !state.cardKnownIds.has(id));
+      if (options.shuffle) ids = shuffleArray(ids);
+      state.cardQueue = ids;
+      state.cardRoundTotal = ids.length;
+      state.cardFlipped = false;
+    }
+
+    function setCardDirection(dir) {
+      state.cardDirection = dir;
+      state.cardFlipped = false;
+      renderCardMode();
+    }
+
+    function updateCardSubBar() {
+      ["en2ja", "ja2en"].forEach((dir) => {
+        const btn = document.getElementById(`card-dir-${dir}`);
+        if (!btn) return;
+        if (state.cardDirection === dir) {
+          btn.style.backgroundColor = "var(--accent-soft)";
+          btn.style.color = "var(--accent)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
+      const filterEl = document.getElementById("card-filter-unknown");
+      if (filterEl) filterEl.checked = state.cardOnlyUnknown;
+    }
+
+    function onCardFilterChange() {
+      state.cardOnlyUnknown = document.getElementById("card-filter-unknown").checked;
+      buildCardQueue();
+      renderCardMode();
+    }
+
+    function shuffleCardQueue() {
+      buildCardQueue({ shuffle: true });
+      renderCardMode();
+    }
+
+    function resetCardKnown() {
+      if (!confirm("このユニットの「覚えた」記録をリセットしますか？")) return;
+      const prefix = `fc-${state.currentUnit}-`;
+      [...state.cardKnownIds].forEach((id) => {
+        if (id.startsWith(prefix)) state.cardKnownIds.delete(id);
+      });
+      saveCardKnown();
+      buildCardQueue();
+      renderCardMode();
+      updateProgressUI();
+    }
+
+    function cardReplayAll() {
+      buildCardQueue({ ignoreFilter: true });
+      renderCardMode();
+    }
+
+    function cardShuffleRestart() {
+      buildCardQueue({ ignoreFilter: true, shuffle: true });
+      renderCardMode();
+    }
+
+    function flipCard() {
+      if (state.cardQueue.length === 0 || state.cardFlipped) return;
+      state.cardFlipped = true;
+      renderCardMode();
+    }
+
+    function answerCard(known) {
+      if (!state.cardFlipped || state.cardQueue.length === 0) return;
+      const id = state.cardQueue.shift();
+      if (known) {
+        state.cardKnownIds.add(id);
+      } else {
+        state.cardKnownIds.delete(id);
+        const pos = Math.min(3, state.cardQueue.length);
+        state.cardQueue.splice(pos, 0, id);
+      }
+      saveCardKnown();
+      state.cardFlipped = false;
+      renderCardMode();
+      updateProgressUI();
+    }
+
+    function renderCardMode() {
+      const area = document.getElementById("flashcard-area");
+      if (!area) return;
+      updateCardSubBar();
+      const unit = UNITS_DATA[state.currentUnit];
+      const cards = FLASHCARD_DATA[state.currentUnit];
+
+      if (state.cardQueue.length === 0) {
+        const known = cards.filter((_, i) => state.cardKnownIds.has(`fc-${state.currentUnit}-${i}`)).length;
+        area.innerHTML = `
+          <div class="surface rounded-2xl border p-7 sm:p-10 text-center space-y-4">
+            <p class="text-base sm:text-lg font-bold text-main">このユニットのカードをすべて確認しました</p>
+            <p class="text-xs sm:text-sm text-muted">覚えた ${known} / ${cards.length} 語</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+              <button
+                type="button"
+                onclick="cardReplayAll()"
+                class="px-5 py-2.5 rounded-xl border text-sm font-semibold transition-colors"
+                style="background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);"
+              >
+                もう一度（全カード）
+              </button>
+              <button
+                type="button"
+                onclick="cardShuffleRestart()"
+                class="px-5 py-2.5 rounded-xl border text-sm font-semibold transition-colors"
+                style="background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);"
+              >
+                シャッフルして再開
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const id = state.cardQueue[0];
+      const idx = Number(id.split("-").pop());
+      const [en, ja] = cards[idx];
+      const front = state.cardDirection === "en2ja" ? en : ja;
+      const back = state.cardDirection === "en2ja" ? ja : en;
+      const pos = Math.min(state.cardRoundTotal - state.cardQueue.length + 1, state.cardRoundTotal);
+
+      area.innerHTML = `
+        <div
+          id="flashcard"
+          onclick="flipCard()"
+          class="surface rounded-2xl border p-7 sm:p-10 cursor-pointer select-none"
+          style="min-height: 14rem;"
+          role="button"
+          aria-label="カードをめくる"
+        >
+          <div class="flex items-center justify-between gap-3 text-xs font-medium text-muted mb-5">
+            <span class="text-accent font-semibold">${escapeHtml(unit.badge)}</span>
+            <span>${pos} / ${state.cardRoundTotal}</span>
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="text-2xl sm:text-3xl font-bold text-main leading-snug text-center flex-1">${escapeHtml(front)}</h3>
+            <button
+              type="button"
+              onclick="event.stopPropagation(); speakText('${escapeJsSingle(en)}')"
+              title="英語を読み上げる"
+              class="p-2.5 rounded-xl border border-soft subtle-box text-muted hover:text-main transition-colors shrink-0"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+              </svg>
+            </button>
+          </div>
+          ${state.cardFlipped ? `
+          <div class="mt-6 pt-5 border-t border-soft text-center">
+            <p class="text-lg sm:text-xl font-bold leading-relaxed" style="color: var(--accent);">${escapeHtml(back)}</p>
+          </div>
+          ` : `
+          <p class="mt-6 pt-5 border-t border-soft text-center text-xs text-faint">タップして答えを表示</p>
+          `}
+        </div>
+
+        <div class="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            id="card-btn-wrong"
+            onclick="answerCard(false)"
+            ${state.cardFlipped ? "" : "disabled"}
+            class="px-6 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
+            style="background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong);"
+          >
+            まだ <span class="text-[10px] font-normal opacity-70 ml-1">←</span>
+          </button>
+          <button
+            type="button"
+            id="card-btn-known"
+            onclick="answerCard(true)"
+            ${state.cardFlipped ? "" : "disabled"}
+            class="px-6 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
+            style="background-color: var(--done-soft); border-color: var(--done); color: var(--done);"
+          >
+            覚えた <span class="text-[10px] font-normal opacity-70 ml-1">→</span>
+          </button>
+        </div>
+      `;
+    }
+
+    /* =========================================================================
        キーボード操作＆タッチスワイプ（集中モードでの快適な移動）
     ========================================================================= */
     function initNavigationShortcuts() {
@@ -2259,6 +2699,17 @@
             answerQuiz(Number(e.key) - 1);
           } else if (e.key === "Enter" && state.quizAnswered) {
             nextQuizQuestion();
+          }
+        } else if (state.currentMode === "card") {
+          if (!state.cardFlipped) {
+            if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
+              flipCard();
+            }
+          } else {
+            if (e.key === "ArrowLeft" || e.key === "1") answerCard(false);
+            if (e.key === "ArrowRight" || e.key === "2") answerCard(true);
+            if (e.key === " ") e.preventDefault();
           }
         }
       });
@@ -2279,6 +2730,25 @@
         const dy = e.changedTouches[0].clientY - startY;
         if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
           stepFocusSentence(dx < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+
+      // カードのスワイプ判定（めくった後のみ有効）
+      const flashArea = document.getElementById("flashcard-area");
+      let cardStartX = 0;
+      let cardStartY = 0;
+      flashArea.addEventListener("touchstart", (e) => {
+        if (e.touches.length !== 1) return;
+        cardStartX = e.touches[0].clientX;
+        cardStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      flashArea.addEventListener("touchend", (e) => {
+        if (state.currentMode !== "card" || !state.cardFlipped) return;
+        const dx = e.changedTouches[0].clientX - cardStartX;
+        const dy = e.changedTouches[0].clientY - cardStartY;
+        if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          answerCard(dx < 0 ? false : true);
         }
       }, { passive: true });
     }
