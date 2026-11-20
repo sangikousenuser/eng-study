@@ -2,7 +2,7 @@
 <html lang="ja" data-theme="paper">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>英文和訳スラッシュ練習帳 | Unit 7・9・12</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -145,6 +145,9 @@
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* タップ応答を速くする（ダブルタップズーム遅延の抑制） */
+    button, [role="button"] { touch-action: manipulation; }
   </style>
 </head>
 <body class="min-h-screen font-sans antialiased selection:bg-orange-200/60">
@@ -164,28 +167,59 @@
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <span class="text-lg font-bold text-accent select-none">/</span>
-          <h1 class="text-sm sm:text-base font-bold tracking-tight text-main">
+          <h1 class="text-sm sm:text-base font-bold tracking-tight text-main whitespace-nowrap">
             英文和訳スラッシュ練習帳
           </h1>
         </div>
 
         <div class="flex items-center gap-2">
-          <!-- 音声速度（控えめなトグル） -->
+          <div class="hidden sm:flex items-center gap-2">
+            <!-- 音声速度（控えめなトグル） -->
+            <button
+              type="button"
+              onclick="cycleSpeechRate()"
+              title="読み上げ速度を切り替え"
+              class="js-rate-label px-2.5 py-1 rounded-lg border border-soft text-xs font-medium text-muted hover:text-main transition-colors"
+            >
+              速度 0.95x
+            </button>
+
+            <!-- 紙面テーマ切替（Paper / Sepia / Dark） -->
+            <div class="flex items-center rounded-lg border border-soft p-0.5" style="background-color: var(--bg-subtle);">
+              <button type="button" data-theme-btn="paper" onclick="setTheme('paper')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="白紙">白</button>
+              <button type="button" data-theme-btn="sepia" onclick="setTheme('sepia')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="生成り（目に優しい）">紙</button>
+              <button type="button" data-theme-btn="dark" onclick="setTheme('dark')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="ダーク">暗</button>
+            </div>
+          </div>
+
+          <!-- モバイル用 表示設定ボタン -->
           <button
             type="button"
-            id="btn-rate-cycle"
-            onclick="cycleSpeechRate()"
-            title="読み上げ速度を切り替え"
-            class="px-2.5 py-1 rounded-lg border border-soft text-xs font-medium text-muted hover:text-main transition-colors"
+            id="btn-mobile-settings"
+            onclick="toggleMobileSettings()"
+            aria-label="表示設定"
+            aria-expanded="false"
+            class="sm:hidden w-9 h-9 rounded-lg border border-soft text-muted hover:text-main transition-colors flex items-center justify-center"
           >
-            速度 0.95x
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
           </button>
+        </div>
+      </div>
 
-          <!-- 紙面テーマ切替（Paper / Sepia / Dark） -->
-          <div class="flex items-center rounded-lg border border-soft p-0.5" style="background-color: var(--bg-subtle);">
-            <button type="button" id="theme-paper" onclick="setTheme('paper')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="白紙">白</button>
-            <button type="button" id="theme-sepia" onclick="setTheme('sepia')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="生成り（目に優しい）">紙</button>
-            <button type="button" id="theme-dark" onclick="setTheme('dark')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="ダーク">暗</button>
+      <!-- モバイル用 表示設定パネル -->
+      <div id="mobile-settings" class="hidden sm:hidden subtle-box rounded-xl border px-3 py-2.5 items-center justify-between gap-3">
+        <div class="flex items-center gap-2 text-xs text-muted">
+          <span>読み上げ速度</span>
+          <button type="button" onclick="cycleSpeechRate()" class="js-rate-label px-2.5 py-2 rounded-lg border border-soft surface text-xs font-medium text-muted" style="min-height: 36px;">速度 0.95x</button>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-muted">
+          <span>テーマ</span>
+          <div class="flex items-center rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
+            <button type="button" data-theme-btn="paper" onclick="setTheme('paper')" class="px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors" title="白紙" style="min-height: 36px;">白</button>
+            <button type="button" data-theme-btn="sepia" onclick="setTheme('sepia')" class="px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors" title="生成り（目に優しい）" style="min-height: 36px;">紙</button>
+            <button type="button" data-theme-btn="dark" onclick="setTheme('dark')" class="px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors" title="ダーク" style="min-height: 36px;">暗</button>
           </div>
         </div>
       </div>
@@ -193,20 +227,20 @@
       <!-- 2段目：ユニット切替 & 学習モード切替 -->
       <div class="flex flex-col gap-2.5">
         <!-- ユニット選択 -->
-        <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar" aria-label="ユニット選択">
-          <button type="button" id="btn-unit-7" onclick="switchUnit('unit7')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+        <nav class="grid grid-cols-3 gap-1 sm:flex sm:items-center" aria-label="ユニット選択">
+          <button type="button" id="btn-unit-7" onclick="switchUnit('unit7')" class="px-3 py-2 sm:py-1.5 text-center rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
             Unit 7 クジラ
           </button>
-          <button type="button" id="btn-unit-9" onclick="switchUnit('unit9')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+          <button type="button" id="btn-unit-9" onclick="switchUnit('unit9')" class="px-3 py-2 sm:py-1.5 text-center rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
             Unit 9 自動運転
           </button>
-          <button type="button" id="btn-unit-12" onclick="switchUnit('unit12')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+          <button type="button" id="btn-unit-12" onclick="switchUnit('unit12')" class="px-3 py-2 sm:py-1.5 text-center rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
             Unit 12 日米AI
           </button>
         </nav>
 
         <!-- モード選択 -->
-        <nav class="flex items-center gap-1.5 sm:gap-5 border-t border-soft pt-2 overflow-x-auto no-scrollbar" aria-label="学習モード">
+        <nav class="hidden sm:flex items-center gap-5" aria-label="学習モード">
           <button type="button" id="tab-slash" onclick="switchMode('slash')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
             スラッシュ読解
           </button>
@@ -227,10 +261,10 @@
   <!-- =========================================================
        メイン学習エリア（余白を広く取り、英文に集中できる構成）
   ========================================================== -->
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-20">
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-28 sm:pb-20">
 
     <!-- ユニット見出し＆習得状況 -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-soft">
+    <div class="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-3 sm:pb-4 border-b border-soft">
       <div>
         <div class="flex items-center gap-2 text-xs font-medium text-muted mb-1">
           <span id="unit-badge" class="text-accent font-semibold">Unit 9</span>
@@ -447,34 +481,43 @@
     <section id="view-card" class="hidden space-y-5">
       <!-- モード内サブバー -->
       <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div class="flex items-center gap-1.5">
-          <div class="inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
-            <button type="button" id="card-dir-en2ja" onclick="setCardDirection('en2ja')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
-              英→日
-            </button>
-            <button type="button" id="card-dir-ja2en" onclick="setCardDirection('ja2en')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
-              日→英
-            </button>
-          </div>
-          <label class="flex items-center gap-1.5 text-muted cursor-pointer select-none">
-            <input id="card-filter-unknown" type="checkbox" onchange="onCardFilterChange()" class="w-3.5 h-3.5 rounded accent-orange-600" checked />
-            未習得のみ
-          </label>
+        <div class="grid grid-cols-2 gap-0.5 w-full sm:w-auto sm:inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
+          <button type="button" id="card-dir-en2ja" onclick="setCardDirection('en2ja')" class="px-3 py-2 sm:py-1.5 rounded-md font-medium transition-colors" style="min-height: 36px;">
+            英→日
+          </button>
+          <button type="button" id="card-dir-ja2en" onclick="setCardDirection('ja2en')" class="px-3 py-2 sm:py-1.5 rounded-md font-medium transition-colors" style="min-height: 36px;">
+            日→英
+          </button>
+        </div>
+        <div class="inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
+          <button type="button" id="card-filter-all" onclick="setCardFilter('all')" class="px-2 sm:px-3 py-1.5 rounded-md font-medium transition-colors" style="min-height: 36px;">すべて</button>
+          <button type="button" id="card-filter-unknown" onclick="setCardFilter('unknown')" class="px-2 sm:px-3 py-1.5 rounded-md font-medium transition-colors" style="min-height: 36px;">未習得</button>
+          <button type="button" id="card-filter-wrong" onclick="setCardFilter('wrong')" title="わからなかったカード" class="px-2 sm:px-3 py-1.5 rounded-md font-medium transition-colors" style="min-height: 36px;">苦手</button>
         </div>
         <div class="flex items-center gap-2">
           <button
             type="button"
             onclick="shuffleCardQueue()"
-            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+            title="シャッフル"
+            aria-label="シャッフル"
+            class="w-9 h-9 sm:w-auto sm:h-auto sm:min-h-0 px-0 sm:px-3 py-0 sm:py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors flex sm:inline-flex items-center justify-center"
           >
-            シャッフル
+            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+            </svg>
+            <span class="hidden sm:inline">シャッフル</span>
           </button>
           <button
             type="button"
             onclick="resetCardKnown()"
-            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+            title="リセット"
+            aria-label="リセット"
+            class="w-9 h-9 sm:w-auto sm:h-auto sm:min-h-0 px-0 sm:px-3 py-0 sm:py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors flex sm:inline-flex items-center justify-center"
           >
-            リセット
+            <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/>
+            </svg>
+            <span class="hidden sm:inline">リセット</span>
           </button>
         </div>
       </div>
@@ -483,10 +526,44 @@
     </section>
   </main>
 
+  <!-- モバイル用ボトムタブバー -->
+  <nav
+    class="sm:hidden fixed bottom-0 inset-x-0 z-40 border-t border-soft"
+    style="background-color: var(--bg-surface); padding-bottom: env(safe-area-inset-bottom);"
+    aria-label="学習モード（モバイル）"
+  >
+    <div class="grid grid-cols-4">
+      <button type="button" id="mtab-slash" onclick="switchMode('slash')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <span>読解</span>
+      </button>
+      <button type="button" id="mtab-quiz" onclick="switchMode('quiz')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0"/>
+        </svg>
+        <span>演習</span>
+      </button>
+      <button type="button" id="mtab-worksheet" onclick="switchMode('worksheet')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+        </svg>
+        <span>穴埋め</span>
+      </button>
+      <button type="button" id="mtab-card" onclick="switchMode('card')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+        </svg>
+        <span>カード</span>
+      </button>
+    </div>
+  </nav>
+
   <!-- 控えめな通知バー（音声エラーなど必要時のみ） -->
   <div
     id="toast"
-    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl border border-soft surface text-xs font-medium text-main shadow-sm opacity-0 pointer-events-none transition-opacity duration-200"
+    class="fixed bottom-20 sm:bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl border border-soft surface text-xs font-medium text-main shadow-sm opacity-0 pointer-events-none transition-opacity duration-200"
   ></div>
 
   <script>
@@ -1629,7 +1706,9 @@
     ========================================================================= */
     const STORAGE_KEY_MASTERED = "slash_translation_mastered_v1";
     const STORAGE_KEY_THEME = "slash_translation_theme_v1";
-    const STORAGE_KEY_CARD_KNOWN = "flashcard_known_v1";
+    const STORAGE_KEY_CARD_PROGRESS = "flashcard_progress_v2";
+    const STORAGE_KEY_CARD_LEGACY = "flashcard_known_v1";
+    const COOKIE_KEY_CARD = "eng_fc_v2";
 
     let state = {
       currentUnit: "unit9",      // 新規追加した Unit 9 を初期表示
@@ -1651,11 +1730,12 @@
       quizCorrect: 0,
       quizTotal: 0,
       cardDirection: "en2ja",    // 'en2ja' | 'ja2en'
-      cardOnlyUnknown: true,
+      cardFilter: "unknown",     // 'all' | 'unknown' | 'wrong'
       cardQueue: [],
       cardRoundTotal: 0,
       cardFlipped: false,
-      cardKnownIds: new Set()
+      cardKnownIds: new Set(),
+      cardWrongIds: new Set()
     };
 
     /* =========================================================================
@@ -1668,10 +1748,30 @@
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) state.masteredIds = new Set(parsed);
         }
-        const rawCards = localStorage.getItem(STORAGE_KEY_CARD_KNOWN);
-        if (rawCards) {
-          const parsedCards = JSON.parse(rawCards);
-          if (Array.isArray(parsedCards)) state.cardKnownIds = new Set(parsedCards);
+        let cardPayload = readCardCookie();
+        if (cardPayload && applyCardPayload(cardPayload)) {
+          saveCardProgress();
+        } else {
+          cardPayload = null;
+          const rawProgress = localStorage.getItem(STORAGE_KEY_CARD_PROGRESS);
+          if (rawProgress) {
+            try { cardPayload = JSON.parse(rawProgress); } catch (e) { cardPayload = null; }
+          }
+          if (cardPayload && applyCardPayload(cardPayload)) {
+            saveCardProgress();
+          } else {
+          const rawLegacy = localStorage.getItem(STORAGE_KEY_CARD_LEGACY);
+          if (rawLegacy) {
+            const parsedLegacy = JSON.parse(rawLegacy);
+            if (Array.isArray(parsedLegacy)) {
+              parsedLegacy.forEach((id) => {
+                const m = /^fc-(unit7|unit9|unit12)-(\d+)$/.exec(id);
+                if (m && Number(m[2]) < FLASHCARD_DATA[m[1]].length) state.cardKnownIds.add(id);
+              });
+              saveCardProgress();
+            }
+          }
+          }
         }
         const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
         if (savedTheme && ["paper", "sepia", "dark"].includes(savedTheme)) {
@@ -1691,9 +1791,69 @@
       }
     }
 
-    function saveCardKnown() {
+    function cardIdsToIndexMap(set) {
+      const out = {};
+      set.forEach((id) => {
+        const m = /^fc-(unit7|unit9|unit12)-(\d+)$/.exec(id);
+        if (!m) return;
+        const idx = Number(m[2]);
+        if (idx >= 0 && idx < FLASHCARD_DATA[m[1]].length) {
+          (out[m[1]] = out[m[1]] || []).push(idx);
+        }
+      });
+      Object.values(out).forEach((arr) => arr.sort((a, b) => a - b));
+      return out;
+    }
+
+    function indexMapToCardIds(map) {
+      const set = new Set();
+      if (!map || typeof map !== "object") return set;
+      Object.keys(FLASHCARD_DATA).forEach((key) => {
+        const arr = Array.isArray(map[key]) ? map[key] : [];
+        arr.forEach((i) => {
+          if (Number.isInteger(i) && i >= 0 && i < FLASHCARD_DATA[key].length) {
+            set.add(`fc-${key}-${i}`);
+          }
+        });
+      });
+      return set;
+    }
+
+    function applyCardPayload(payload) {
+      if (!payload || typeof payload !== "object") return false;
+      if (payload.d && !["en2ja", "ja2en"].includes(payload.d)) return false;
+      if (payload.f && !["all", "unknown", "wrong"].includes(payload.f)) return false;
+      state.cardKnownIds = indexMapToCardIds(payload.k);
+      state.cardWrongIds = indexMapToCardIds(payload.w);
+      if (payload.d) state.cardDirection = payload.d;
+      if (payload.f) state.cardFilter = payload.f;
+      return true;
+    }
+
+    function readCardCookie() {
       try {
-        localStorage.setItem(STORAGE_KEY_CARD_KNOWN, JSON.stringify([...state.cardKnownIds]));
+        const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${COOKIE_KEY_CARD}=([^;]*)`));
+        if (!m) return null;
+        return JSON.parse(decodeURIComponent(m[1]));
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function saveCardProgress() {
+      const json = JSON.stringify({
+        k: cardIdsToIndexMap(state.cardKnownIds),
+        w: cardIdsToIndexMap(state.cardWrongIds),
+        d: state.cardDirection,
+        f: state.cardFilter
+      });
+      try {
+        document.cookie = `${COOKIE_KEY_CARD}=${encodeURIComponent(json)}; max-age=31536000; path=/; SameSite=Lax`;
+      } catch (err) {
+        console.warn("Cookie save skipped:", err);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_CARD_PROGRESS, json);
       } catch (err) {
         console.warn("Storage save skipped:", err);
       }
@@ -1715,8 +1875,7 @@
     function applyTheme() {
       document.documentElement.setAttribute("data-theme", state.theme);
       ["paper", "sepia", "dark"].forEach((t) => {
-        const btn = document.getElementById(`theme-${t}`);
-        if (!btn) return;
+        document.querySelectorAll(`[data-theme-btn="${t}"]`).forEach((btn) => {
         if (state.theme === t) {
           btn.style.backgroundColor = "var(--bg-surface)";
           btn.style.color = "var(--text-main)";
@@ -1726,6 +1885,7 @@
           btn.style.color = "var(--text-muted)";
           btn.style.fontWeight = "500";
         }
+        });
       });
     }
 
@@ -1762,7 +1922,17 @@
       const rates = [0.75, 0.95, 1.15];
       const nextIdx = (rates.indexOf(state.speechRate) + 1) % rates.length;
       state.speechRate = rates[nextIdx];
-      document.getElementById("btn-rate-cycle").textContent = `速度 ${state.speechRate}x`;
+      document.querySelectorAll(".js-rate-label").forEach((el) => {
+        el.textContent = `速度 ${state.speechRate}x`;
+      });
+    }
+
+    function toggleMobileSettings() {
+      const panel = document.getElementById("mobile-settings");
+      const btn = document.getElementById("btn-mobile-settings");
+      const isHidden = panel.classList.toggle("hidden");
+      panel.classList.toggle("flex", !isHidden);
+      btn.setAttribute("aria-expanded", String(!isHidden));
     }
 
     function stripClozeMarkers(clozeStr) {
@@ -1835,15 +2005,26 @@
       // モードタブ（下線のみでシンプルに）
       ["slash", "quiz", "worksheet", "card"].forEach((t) => {
         const el = document.getElementById(`tab-${t}`);
-        if (!el) return;
-        if (state.currentMode === t) {
-          el.style.borderColor = "var(--accent)";
-          el.style.color = "var(--text-main)";
-          el.style.fontWeight = "700";
-        } else {
-          el.style.borderColor = "transparent";
-          el.style.color = "var(--text-muted)";
-          el.style.fontWeight = "500";
+        if (el) {
+          if (state.currentMode === t) {
+            el.style.borderColor = "var(--accent)";
+            el.style.color = "var(--text-main)";
+            el.style.fontWeight = "700";
+          } else {
+            el.style.borderColor = "transparent";
+            el.style.color = "var(--text-muted)";
+            el.style.fontWeight = "500";
+          }
+        }
+        const mel = document.getElementById(`mtab-${t}`);
+        if (mel) {
+          if (state.currentMode === t) {
+            mel.style.color = "var(--accent)";
+            mel.style.fontWeight = "700";
+          } else {
+            mel.style.color = "var(--text-muted)";
+            mel.style.fontWeight = "500";
+          }
         }
       });
 
@@ -1854,6 +2035,11 @@
       }
       document.getElementById("unit-title-en").textContent = unit.titleEn;
       document.getElementById("unit-title-ja").textContent = unit.titleJa;
+      ["unit-title-en", "unit-title-ja"].forEach((tid) => {
+        const el = document.getElementById(tid);
+        el.classList.toggle("hidden", state.currentMode === "card");
+        el.classList.toggle("sm:block", state.currentMode === "card");
+      });
 
       updateProgressUI();
     }
@@ -1863,9 +2049,10 @@
       if (state.currentMode === "card") {
         const cards = FLASHCARD_DATA[state.currentUnit];
         const known = cards.filter((_, i) => state.cardKnownIds.has(`fc-${state.currentUnit}-${i}`)).length;
+        const wrong = cards.filter((_, i) => state.cardWrongIds.has(`fc-${state.currentUnit}-${i}`)).length;
         const pct = cards.length === 0 ? 0 : Math.round((known / cards.length) * 100);
         document.getElementById("top-progress-line").style.width = `${pct}%`;
-        document.getElementById("progress-text").textContent = `覚えた ${known} / ${cards.length}`;
+        document.getElementById("progress-text").textContent = `覚えた ${known} / ${cards.length}・苦手 ${wrong}`;
         return;
       }
       const total = unit.sentences.length;
@@ -2493,8 +2680,13 @@
     function buildCardQueue(options = {}) {
       const cards = FLASHCARD_DATA[state.currentUnit];
       let ids = cards.map((_, i) => `fc-${state.currentUnit}-${i}`);
-      const onlyUnknown = options.ignoreFilter ? false : state.cardOnlyUnknown;
-      if (onlyUnknown) ids = ids.filter((id) => !state.cardKnownIds.has(id));
+      if (!options.ignoreFilter) {
+        if (state.cardFilter === "unknown") {
+          ids = ids.filter((id) => !state.cardKnownIds.has(id));
+        } else if (state.cardFilter === "wrong") {
+          ids = ids.filter((id) => state.cardWrongIds.has(id));
+        }
+      }
       if (options.shuffle) ids = shuffleArray(ids);
       state.cardQueue = ids;
       state.cardRoundTotal = ids.length;
@@ -2504,6 +2696,7 @@
     function setCardDirection(dir) {
       state.cardDirection = dir;
       state.cardFlipped = false;
+      saveCardProgress();
       renderCardMode();
     }
 
@@ -2521,12 +2714,33 @@
           btn.style.fontWeight = "500";
         }
       });
-      const filterEl = document.getElementById("card-filter-unknown");
-      if (filterEl) filterEl.checked = state.cardOnlyUnknown;
+      const cards = FLASHCARD_DATA[state.currentUnit];
+      const counts = { all: cards.length, unknown: 0, wrong: 0 };
+      cards.forEach((_, i) => {
+        const id = `fc-${state.currentUnit}-${i}`;
+        if (!state.cardKnownIds.has(id)) counts.unknown += 1;
+        if (state.cardWrongIds.has(id)) counts.wrong += 1;
+      });
+      const filterLabels = { all: "すべて", unknown: "未習得", wrong: "苦手" };
+      ["all", "unknown", "wrong"].forEach((f) => {
+        const btn = document.getElementById(`card-filter-${f}`);
+        if (!btn) return;
+        btn.textContent = `${filterLabels[f]} ${counts[f]}`;
+        if (state.cardFilter === f) {
+          btn.style.backgroundColor = "var(--accent-soft)";
+          btn.style.color = "var(--accent)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
     }
 
-    function onCardFilterChange() {
-      state.cardOnlyUnknown = document.getElementById("card-filter-unknown").checked;
+    function setCardFilter(filter) {
+      state.cardFilter = filter;
+      saveCardProgress();
       buildCardQueue();
       renderCardMode();
     }
@@ -2537,12 +2751,15 @@
     }
 
     function resetCardKnown() {
-      if (!confirm("このユニットの「覚えた」記録をリセットしますか？")) return;
+      if (!confirm("このユニットの「覚えた」「苦手」記録をリセットしますか？")) return;
       const prefix = `fc-${state.currentUnit}-`;
       [...state.cardKnownIds].forEach((id) => {
         if (id.startsWith(prefix)) state.cardKnownIds.delete(id);
       });
-      saveCardKnown();
+      [...state.cardWrongIds].forEach((id) => {
+        if (id.startsWith(prefix)) state.cardWrongIds.delete(id);
+      });
+      saveCardProgress();
       buildCardQueue();
       renderCardMode();
       updateProgressUI();
@@ -2558,6 +2775,10 @@
       renderCardMode();
     }
 
+    function cardReviewWrong() {
+      setCardFilter("wrong");
+    }
+
     function flipCard() {
       if (state.cardQueue.length === 0 || state.cardFlipped) return;
       state.cardFlipped = true;
@@ -2569,12 +2790,14 @@
       const id = state.cardQueue.shift();
       if (known) {
         state.cardKnownIds.add(id);
+        state.cardWrongIds.delete(id);
       } else {
         state.cardKnownIds.delete(id);
+        state.cardWrongIds.add(id);
         const pos = Math.min(3, state.cardQueue.length);
         state.cardQueue.splice(pos, 0, id);
       }
-      saveCardKnown();
+      saveCardProgress();
       state.cardFlipped = false;
       renderCardMode();
       updateProgressUI();
@@ -2589,11 +2812,22 @@
 
       if (state.cardQueue.length === 0) {
         const known = cards.filter((_, i) => state.cardKnownIds.has(`fc-${state.currentUnit}-${i}`)).length;
+        const wrong = cards.filter((_, i) => state.cardWrongIds.has(`fc-${state.currentUnit}-${i}`)).length;
         area.innerHTML = `
           <div class="surface rounded-2xl border p-7 sm:p-10 text-center space-y-4">
             <p class="text-base sm:text-lg font-bold text-main">このユニットのカードをすべて確認しました</p>
-            <p class="text-xs sm:text-sm text-muted">覚えた ${known} / ${cards.length} 語</p>
+            <p class="text-xs sm:text-sm text-muted">覚えた ${known} / ${cards.length} 語・苦手 ${wrong} 語</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+              ${wrong > 0 ? `
+              <button
+                type="button"
+                onclick="cardReviewWrong()"
+                class="px-5 py-2.5 rounded-xl border text-sm font-semibold transition-colors"
+                style="background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong);"
+              >
+                苦手 ${wrong} 枚を復習
+              </button>
+              ` : ""}
               <button
                 type="button"
                 onclick="cardReplayAll()"
@@ -2622,64 +2856,69 @@
       const front = state.cardDirection === "en2ja" ? en : ja;
       const back = state.cardDirection === "en2ja" ? ja : en;
       const pos = Math.min(state.cardRoundTotal - state.cardQueue.length + 1, state.cardRoundTotal);
+      const isWrong = state.cardWrongIds.has(id);
+      const speakerSvg = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>`;
+      const speakerBtn = (extraCls) => `<button
+        type="button"
+        onclick="event.stopPropagation(); speakText('${escapeJsSingle(en)}')"
+        title="英語を読み上げる"
+        class="p-2.5 rounded-xl border border-soft subtle-box text-muted hover:text-main transition-colors shrink-0 ${extraCls}"
+      >${speakerSvg}</button>`;
 
       area.innerHTML = `
         <div
           id="flashcard"
           onclick="flipCard()"
-          class="surface rounded-2xl border p-7 sm:p-10 cursor-pointer select-none"
-          style="min-height: 14rem;"
+          class="surface rounded-2xl border p-5 sm:p-10 cursor-pointer select-none flex flex-col min-h-[34vh] sm:min-h-56"
           role="button"
           aria-label="カードをめくる"
         >
-          <div class="flex items-center justify-between gap-3 text-xs font-medium text-muted mb-5">
-            <span class="text-accent font-semibold">${escapeHtml(unit.badge)}</span>
-            <span>${pos} / ${state.cardRoundTotal}</span>
+          <div class="flex items-center justify-between gap-3 text-xs font-medium text-muted">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-accent font-semibold shrink-0">${escapeHtml(unit.badge)}</span>
+              ${isWrong ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap" style="color: var(--wrong); background-color: var(--wrong-soft);">前回わからなかった</span>` : ""}
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span>${pos} / ${state.cardRoundTotal}</span>
+              ${speakerBtn("sm:hidden")}
+            </div>
           </div>
-          <div class="flex items-start justify-between gap-3">
-            <h3 class="text-2xl sm:text-3xl font-bold text-main leading-snug text-center flex-1">${escapeHtml(front)}</h3>
-            <button
-              type="button"
-              onclick="event.stopPropagation(); speakText('${escapeJsSingle(en)}')"
-              title="英語を読み上げる"
-              class="p-2.5 rounded-xl border border-soft subtle-box text-muted hover:text-main transition-colors shrink-0"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
-              </svg>
-            </button>
+          <div class="flex-1 flex items-center justify-center gap-3 py-5">
+            <h3 class="text-3xl font-bold text-main leading-snug text-center flex-1 break-words">${escapeHtml(front)}</h3>
+            ${speakerBtn("hidden sm:block")}
           </div>
           ${state.cardFlipped ? `
-          <div class="mt-6 pt-5 border-t border-soft text-center">
-            <p class="text-lg sm:text-xl font-bold leading-relaxed" style="color: var(--accent);">${escapeHtml(back)}</p>
+          <div class="pt-5 border-t border-soft text-center">
+            <p class="text-2xl sm:text-xl font-bold leading-relaxed break-words" style="color: var(--accent);">${escapeHtml(back)}</p>
           </div>
           ` : `
-          <p class="mt-6 pt-5 border-t border-soft text-center text-xs text-faint">タップして答えを表示</p>
+          <p class="pt-5 border-t border-soft text-center text-xs text-faint">タップして答えを表示</p>
           `}
         </div>
 
-        <div class="flex items-center justify-center gap-3">
+        <div class="grid grid-cols-2 gap-3 sm:flex sm:items-center sm:justify-center">
           <button
             type="button"
             id="card-btn-wrong"
             onclick="answerCard(false)"
             ${state.cardFlipped ? "" : "disabled"}
-            class="px-6 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
+            class="px-6 py-4 sm:py-2.5 rounded-xl border text-base sm:text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
             style="background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong);"
           >
-            まだ <span class="text-[10px] font-normal opacity-70 ml-1">←</span>
+            まだ <span class="hidden sm:inline text-[10px] font-normal opacity-70 ml-1">←</span>
           </button>
           <button
             type="button"
             id="card-btn-known"
             onclick="answerCard(true)"
             ${state.cardFlipped ? "" : "disabled"}
-            class="px-6 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
+            class="px-6 py-4 sm:py-2.5 rounded-xl border text-base sm:text-sm font-semibold transition-colors ${state.cardFlipped ? "" : "opacity-40"}"
             style="background-color: var(--done-soft); border-color: var(--done); color: var(--done);"
           >
-            覚えた <span class="text-[10px] font-normal opacity-70 ml-1">→</span>
+            覚えた <span class="hidden sm:inline text-[10px] font-normal opacity-70 ml-1">→</span>
           </button>
         </div>
+        <p class="sm:hidden text-center text-[11px] text-faint">カードをタップでめくる・左右スワイプでも回答できます</p>
       `;
     }
 
