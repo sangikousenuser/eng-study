@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="paper">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>英文和訳スラッシュ練習帳 | Unit 7・9・12</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', '"Noto Sans JP"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* =========================================================
+       集中学習向けカラーテーマ（Paper / Sepia / Dark）
+       ※視線の邪魔をしない低彩度な紙面と、区切り線だけの落ち着いたオレンジ
+    ========================================================== */
+    :root,
+    [data-theme="paper"] {
+      --bg-page: #F7F6F3;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2F0EB;
+      --border-soft: #E5E2DA;
+      --border-strong: #D4CFC5;
+      --text-main: #1F1E1C;
+      --text-muted: #6B6862;
+      --text-faint: #9B968D;
+      --accent: #C85D1A;
+      --accent-soft: #FDF3EC;
+      --accent-border: #EAC4A8;
+      --done: #2E7D5B;
+      --done-soft: #EEF7F2;
+      --wrong: #B54343;
+      --wrong-soft: #FBF1F1;
+    }
+
+    [data-theme="sepia"] {
+      --bg-page: #F1EBD9;
+      --bg-surface: #FAF6EC;
+      --bg-subtle: #EAE2CE;
+      --border-soft: #DFD5BE;
+      --border-strong: #CBBFA3;
+      --text-main: #2E2720;
+      --text-muted: #6C6051;
+      --text-faint: #9B8D7A;
+      --accent: #B85214;
+      --accent-soft: #F5E6D6;
+      --accent-border: #DFB591;
+      --done: #2C6F51;
+      --done-soft: #E6F0E8;
+      --wrong: #A63C3C;
+      --wrong-soft: #F5E4E1;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #141517;
+      --bg-surface: #1C1E21;
+      --bg-subtle: #25282C;
+      --border-soft: #2E3238;
+      --border-strong: #40464F;
+      --text-main: #E7E6E2;
+      --text-muted: #9A9EA6;
+      --text-faint: #686D76;
+      --accent: #E28246;
+      --accent-soft: #2B2019;
+      --accent-border: #633D25;
+      --done: #58B48A;
+      --done-soft: #192922;
+      --wrong: #E07070;
+      --wrong-soft: #2B1D1E;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .surface {
+      background-color: var(--bg-surface);
+      border-color: var(--border-soft);
+    }
+
+    .subtle-box {
+      background-color: var(--bg-subtle);
+      border-color: var(--border-soft);
+    }
+
+    .text-main { color: var(--text-main); }
+    .text-muted { color: var(--text-muted); }
+    .text-faint { color: var(--text-faint); }
+    .text-accent { color: var(--accent); }
+    .border-soft { border-color: var(--border-soft); }
+
+    /* チャンク訳の静かな開閉 */
+    .chunk-hidden {
+      color: transparent;
+      background-color: var(--bg-subtle);
+      border-radius: 0.375rem;
+      user-select: none;
+      transition: all 0.18s ease;
+    }
+    .chunk-visible {
+      color: var(--accent);
+      background-color: transparent;
+      transition: all 0.18s ease;
+    }
+
+    /* プリント穴埋めスロット */
+    .cloze-slot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 4.5rem;
+      padding: 0.1rem 0.55rem;
+      margin: 0 0.15rem;
+      border-radius: 0.375rem;
+      border-bottom: 2px solid var(--accent);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      vertical-align: baseline;
+    }
+    .cloze-slot-closed {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .cloze-slot-open {
+      background-color: transparent;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen font-sans antialiased selection:bg-orange-200/60">
+
+  <!-- 極細の進捗ライン（視界を邪魔しない2px） -->
+  <div class="fixed top-0 left-0 right-0 h-0.5 z-40" style="background-color: var(--border-soft);">
+    <div id="top-progress-line" class="h-full transition-all duration-300" style="width: 0%; background-color: var(--accent);"></div>
+  </div>
+
+  <!-- =========================================================
+       静かなトップバー（固定しないことで読書空間を広く確保）
+  ========================================================== -->
+  <header class="border-b border-soft" style="background-color: var(--bg-surface);">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-4 pb-3 space-y-3">
+
+      <!-- 1段目：タイトル・テーマ・音声速度 -->
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-bold text-accent select-none">/</span>
+          <h1 class="text-sm sm:text-base font-bold tracking-tight text-main">
+            英文和訳スラッシュ練習帳
+          </h1>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- 音声速度（控えめなトグル） -->
+          <button
+            type="button"
+            id="btn-rate-cycle"
+            onclick="cycleSpeechRate()"
+            title="読み上げ速度を切り替え"
+            class="px-2.5 py-1 rounded-lg border border-soft text-xs font-medium text-muted hover:text-main transition-colors"
+          >
+            速度 0.95x
+          </button>
+
+          <!-- 紙面テーマ切替（Paper / Sepia / Dark） -->
+          <div class="flex items-center rounded-lg border border-soft p-0.5" style="background-color: var(--bg-subtle);">
+            <button type="button" id="theme-paper" onclick="setTheme('paper')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="白紙">白</button>
+            <button type="button" id="theme-sepia" onclick="setTheme('sepia')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="生成り（目に優しい）">紙</button>
+            <button type="button" id="theme-dark" onclick="setTheme('dark')" class="px-2 py-1 rounded-md text-[11px] font-medium transition-colors" title="ダーク">暗</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2段目：ユニット切替 & 学習モード切替 -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+        <!-- ユニット選択 -->
+        <nav class="flex items-center gap-1 overflow-x-auto no-scrollbar" aria-label="ユニット選択">
+          <button type="button" id="btn-unit-7" onclick="switchUnit('unit7')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+            Unit 7 クジラ
+          </button>
+          <button type="button" id="btn-unit-9" onclick="switchUnit('unit9')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+            Unit 9 自動運転
+          </button>
+          <button type="button" id="btn-unit-12" onclick="switchUnit('unit12')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-colors">
+            Unit 12 日米AI
+          </button>
+        </nav>
+
+        <!-- モード選択 -->
+        <nav class="flex items-center gap-4 border-t sm:border-t-0 border-soft pt-2 sm:pt-0 overflow-x-auto no-scrollbar" aria-label="学習モード">
+          <button type="button" id="tab-slash" onclick="switchMode('slash')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
+            スラッシュ読解
+          </button>
+          <button type="button" id="tab-quiz" onclick="switchMode('quiz')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
+            単語・チャンク演習
+          </button>
+          <button type="button" id="tab-worksheet" onclick="switchMode('worksheet')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
+            プリント穴埋め
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       メイン学習エリア（余白を広く取り、英文に集中できる構成）
+  ========================================================== -->
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-20">
+
+    <!-- ユニット見出し＆習得状況 -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4 border-b border-soft">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-medium text-muted mb-1">
+          <span id="unit-badge" class="text-accent font-semibold">Unit 9</span>
+          <span>/</span>
+          <span id="progress-text">習得 0 / 0</span>
+        </div>
+        <h2 id="unit-title-en" class="text-base sm:text-lg font-bold text-main leading-snug"></h2>
+        <p id="unit-title-ja" class="text-xs sm:text-sm text-muted mt-0.5"></p>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         モード1：スラッシュ読解（1文集中 / 一覧 切替対応）
+    ========================================================== -->
+    <section id="view-slash" class="space-y-5">
+      <!-- 静かなコントロールバー -->
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5">
+          <!-- 1文集中 / 一覧 切替 -->
+          <div class="inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-surface);">
+            <button type="button" id="layout-focus" onclick="setSlashLayout('focus')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
+              1文集中
+            </button>
+            <button type="button" id="layout-list" onclick="setSlashLayout('list')" class="px-3 py-1.5 rounded-md font-medium transition-colors">
+              一覧
+            </button>
+          </div>
+
+          <button
+            type="button"
+            id="btn-toggle-slashes"
+            onclick="toggleSlashes()"
+            class="px-3 py-1.5 rounded-lg border border-soft font-medium transition-colors"
+            style="background-color: var(--bg-surface);"
+          >
+            / 区切り: ON
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            onclick="setAllChunksVisibility(false)"
+            class="px-2.5 py-1.5 rounded-lg text-muted hover:text-main transition-colors font-medium"
+          >
+            訳を隠す
+          </button>
+          <button
+            type="button"
+            onclick="setAllChunksVisibility(true)"
+            class="px-2.5 py-1.5 rounded-lg text-muted hover:text-main transition-colors font-medium"
+          >
+            訳を表示
+          </button>
+          <label class="inline-flex items-center gap-1.5 text-muted cursor-pointer select-none pl-1">
+            <input id="filter-unmastered" type="checkbox" onchange="onFilterUnmasteredChange()" class="w-3.5 h-3.5 rounded accent-orange-600" />
+            未習得のみ
+          </label>
+        </div>
+      </div>
+
+      <!-- 1文集中モード用ナビゲーション（上部インジケーター） -->
+      <div id="focus-nav-top" class="hidden flex items-center justify-between gap-3 py-1">
+        <button
+          type="button"
+          onclick="stepFocusSentence(-1)"
+          id="btn-prev-top"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-soft surface text-xs sm:text-sm font-medium text-muted hover:text-main disabled:opacity-35 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          前の文
+        </button>
+
+        <div class="flex items-center gap-2">
+          <select
+            id="focus-sentence-select"
+            onchange="jumpToFocusIndex(Number(this.value))"
+            aria-label="文を選択"
+            class="rounded-lg border border-soft surface px-3 py-1.5 text-xs sm:text-sm font-medium text-main outline-none"
+          ></select>
+        </div>
+
+        <button
+          type="button"
+          onclick="stepFocusSentence(1)"
+          id="btn-next-top"
+          class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-soft surface text-xs sm:text-sm font-medium text-muted hover:text-main disabled:opacity-35 transition-colors"
+        >
+          次の文
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- 文カード表示領域（スワイプ対応） -->
+      <div id="slash-cards-container" class="space-y-6"></div>
+
+      <!-- 1文集中モード用フッターガイド -->
+      <div id="focus-nav-bottom" class="hidden pt-2 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onclick="stepFocusSentence(-1)"
+          id="btn-prev-bottom"
+          class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border border-soft surface text-sm font-medium text-main hover:border-orange-400/60 disabled:opacity-35 transition-colors"
+        >
+          ← 前の文
+        </button>
+        <span class="hidden sm:inline text-xs text-faint">
+          ← → キーまたはスワイプで移動
+        </span>
+        <button
+          type="button"
+          onclick="stepFocusSentence(1)"
+          id="btn-next-bottom"
+          class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border text-sm font-medium transition-colors disabled:opacity-35"
+          style="background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);"
+        >
+          次の文 →
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         モード2：単語・チャンク演習（静かな4択）
+    ========================================================== -->
+    <section id="view-quiz" class="hidden space-y-5">
+      <div class="surface rounded-2xl border p-5 sm:p-8">
+        <!-- モード内サブバー -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-soft">
+          <div class="inline-flex rounded-lg border border-soft p-0.5" style="background-color: var(--bg-subtle);">
+            <button type="button" id="quiz-type-vocab" onclick="setQuizType('vocab')" class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors">
+              重要単語
+            </button>
+            <button type="button" id="quiz-type-chunk" onclick="setQuizType('chunk')" class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors">
+              チャンク訳
+            </button>
+          </div>
+          <span id="quiz-score" class="text-xs sm:text-sm font-medium text-muted">正答 0 / 0</span>
+        </div>
+
+        <!-- 出題エリア -->
+        <div class="py-7 sm:py-8">
+          <div class="text-xs font-medium text-muted mb-3" id="quiz-source-tag">Unit 9</div>
+
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <h3 id="quiz-question" class="text-xl sm:text-2xl font-bold text-main leading-snug"></h3>
+            <button
+              type="button"
+              onclick="speakCurrentQuiz()"
+              title="発音を聞く"
+              class="p-2.5 rounded-xl border border-soft subtle-box text-muted hover:text-main transition-colors shrink-0"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+              </svg>
+            </button>
+          </div>
+
+          <p id="quiz-context" class="text-xs sm:text-sm text-muted leading-relaxed mb-7"></p>
+
+          <!-- 4択ボタン -->
+          <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+          <!-- 静かな正誤フィードバック -->
+          <div id="quiz-feedback" class="hidden mt-6 p-4 rounded-xl border">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-1">
+                <p id="quiz-feedback-title" class="text-sm font-bold"></p>
+                <p id="quiz-feedback-detail" class="text-xs sm:text-sm text-muted leading-relaxed"></p>
+              </div>
+              <button
+                type="button"
+                onclick="nextQuizQuestion()"
+                class="px-5 py-2.5 rounded-xl border text-sm font-semibold shrink-0 transition-colors"
+                style="background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);"
+              >
+                次へ →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         モード3：プリント穴埋めモード
+    ========================================================== -->
+    <section id="view-worksheet" class="hidden space-y-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span class="text-muted">カッコ部分をタップすると答えが表示されます</span>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            onclick="toggleAllWorksheetBlanks(false)"
+            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+          >
+            すべて隠す
+          </button>
+          <button
+            type="button"
+            onclick="toggleAllWorksheetBlanks(true)"
+            class="px-3 py-1.5 rounded-lg border border-soft surface text-accent font-medium transition-colors"
+          >
+            すべて表示
+          </button>
+        </div>
+      </div>
+
+      <div id="worksheet-container" class="space-y-4"></div>
+    </section>
+  </main>
+
+  <!-- 控えめな通知バー（音声エラーなど必要時のみ） -->
+  <div
+    id="toast"
+    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl border border-soft surface text-xs font-medium text-main shadow-sm opacity-0 pointer-events-none transition-opacity duration-200"
+  ></div>
+
+  <script>
+    /* =========================================================================
+       データ定義：Unit 7・Unit 9（新規追加）・Unit 12
+    ========================================================================= */
+    const UNITS_DATA = {
+      unit7: {
+        badge: "Unit 7",
+        titleEn: "Gray whales shrinking fast as climate warms",
+        titleJa: "気候の温暖化によりコククジラが急速に小型化",
+        sentences: [
+          {
+            id: "u7-1",
+            label: "①",
+            chunks: [
+              { en: "Pacific coast gray whales", ja: "太平洋沿岸のコククジラは" },
+              { en: "have shrunk in length", ja: "体長が縮小している" },
+              { en: "an astonishing 13 percent", ja: "驚くことに13%も" },
+              { en: "since 2000,", ja: "2000年以降、" },
+              { en: "adding to evidence", ja: "証拠の追加となっており" },
+              { en: "that climate change and other human activities", ja: "気候変動やその他の人間の活動が" },
+              { en: "are making marine mammals smaller,", ja: "海洋哺乳類を小型化しているという" },
+              { en: "a study says.", ja: "ある研究が発表している。" }
+            ],
+            jpCloze: "{{太平洋}}沿岸のコククジラは2000年以降、{{体長}}が驚くことに13%も{{縮小}}しており、気候変動やその他の人間の活動が{{海洋哺乳類}}を小型化している{{証拠}}の追加になると、ある研究が発表した。",
+            grammarNote: "adding to evidence は分詞構文（「〜という証拠に付け加えて」）。that 節は evidence の内容を説明する同格の that。",
+            vocab: [
+              { en: "shrink (shrunk)", ja: "縮む、縮小する", pos: "動" },
+              { en: "astonishing", ja: "驚くべき", pos: "形" },
+              { en: "add to ~", ja: "〜を増やす、〜の追加になる", pos: "熟" },
+              { en: "evidence", ja: "証拠", pos: "名" },
+              { en: "marine mammals", ja: "海洋哺乳類", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-2",
+            label: "②",
+            chunks: [
+              { en: "Their diminished size", ja: "彼らの小型化（小さくなった体格）は" },
+              { en: "could have big impacts", ja: "大きな影響を与える可能性があり" },
+              { en: "on survival rates", ja: "生存率や" },
+              { en: "and reproductive success —", ja: "繁殖の成功に――" },
+              { en: "and trigger ripple effects", ja: "そして波及効果のきっかけになり得る" },
+              { en: "throughout their entire food webs.", ja: "食物網全体にわたって。" }
+            ],
+            jpCloze: "コククジラの小型化は{{生存}}率や{{繁殖}}の成功に大きな{{影響}}を与え、食物{{網}}全体への{{波及効果}}のきっかけになる可能性がある。",
+            grammarNote: "could は可能性（「〜し得る」）。have と trigger が and で並列に could にかかっている。",
+            vocab: [
+              { en: "diminished", ja: "小さくなった、減少した", pos: "形" },
+              { en: "survival rate", ja: "生存率", pos: "名" },
+              { en: "reproductive success", ja: "繁殖の成功", pos: "名" },
+              { en: "trigger", ja: "〜のきっかけになる、引き起こす", pos: "動" },
+              { en: "ripple effect", ja: "波及効果", pos: "名" },
+              { en: "food web", ja: "食物網", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-3",
+            label: "③",
+            chunks: [
+              { en: "For the paper,", ja: "この論文では、" },
+              { en: "researchers focused on", ja: "研究者らは〜に焦点を当てた" },
+              { en: "the Pacific Coast Feeding Group (PCFG) —", ja: "太平洋岸摂餌群(PCFG)に――" },
+              { en: "around 200 whales", ja: "約200頭のクジラであり" },
+              { en: "that are part of", ja: "〜の一部である" },
+              { en: "the wider Eastern North Pacific (ENP) population", ja: "より広範な北太平洋東部(ENP)の個体群の" },
+              { en: "of around 14,500.", ja: "約14,500頭からなる。" }
+            ],
+            jpCloze: "この{{論文}}では、太平洋岸摂餌群(PCFG)、つまり北太平洋東部(ENP)の約14,500頭の{{一部}}である約200頭に{{焦点を当てた}}。",
+            grammarNote: "ダッシュ（—）の後ろで PCFG の具体的な説明（約14,500頭の一部である約200頭）を補足している。",
+            vocab: [
+              { en: "paper", ja: "論文", pos: "名" },
+              { en: "focus on ~", ja: "〜に焦点を当てる", pos: "熟" },
+              { en: "feeding group", ja: "摂餌（せつじ）群", pos: "名" },
+              { en: "population", ja: "個体群、個体数", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-4",
+            label: "④-1",
+            chunks: [
+              { en: "Considered ecosystem sentinels,", ja: "生態系の監視役と見なされており、" },
+              { en: "they stay closer to shore,", ja: "彼らは岸により近い場所にとどまり、" },
+              { en: "feeding in shallower, warmer waters,", ja: "より浅く暖かい海域で餌をとっている、" },
+              { en: "than the wider population", ja: "より大きな個体群よりも" },
+              { en: "that inhabits colder, deeper Arctic seas.", ja: "より冷たく深い北極の海に生息する。" }
+            ],
+            jpCloze: "生態系の{{監視役}}と見なされる彼らは、より冷たく深い{{北極}}の海に{{生息}}する大きな個体群よりも{{岸}}に近い場所にいて、より{{浅く}}暖かい海域で餌をとっている。",
+            grammarNote: "文頭の Considered は受動態の分詞構文（Being considered...「〜と見なされて」）。feeding も付帯状況の分詞構文。",
+            vocab: [
+              { en: "ecosystem", ja: "生態系", pos: "名" },
+              { en: "sentinel", ja: "監視役、見張り番", pos: "名" },
+              { en: "shore", ja: "岸、海岸", pos: "名" },
+              { en: "shallow", ja: "浅い", pos: "形" },
+              { en: "inhabit", ja: "〜に生息する", pos: "動" },
+              { en: "Arctic", ja: "北極の", pos: "形" }
+            ]
+          },
+          {
+            id: "u7-5",
+            label: "④-2",
+            chunks: [
+              { en: "Prior research had shown", ja: "先行研究は示していた" },
+              { en: "they are in worse shape", ja: "彼らがより悪い状態にあることを" },
+              { en: "than their counterparts,", ja: "他の個体（対照群）よりも、" },
+              { en: "with smaller bodies, heads and flukes.", ja: "体も頭も尾びれもより小さい状態で。" }
+            ],
+            jpCloze: "{{先行}}研究では、体も頭も{{尾びれ}}も小さく、他の個体より{{状態が悪い}}ことを示していた。",
+            grammarNote: "in worse shape は「体調・体格の状態がより悪い」。counterparts はここでは ENP 全体の他のクジラたちを指す。",
+            vocab: [
+              { en: "prior", ja: "以前の、先行する", pos: "形" },
+              { en: "in worse shape", ja: "より悪い状態で", pos: "熟" },
+              { en: "counterpart", ja: "対応するもの、他の個体", pos: "名" },
+              { en: "fluke", ja: "（クジラの）尾びれ", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-6",
+            label: "⑤",
+            chunks: [
+              { en: "\"Now we know", ja: "「今、我々は知っている（学んだ）" },
+              { en: "they have been shrinking in body size", ja: "彼らが体長・体格において縮小し続けていることを" },
+              { en: "over the past 20-40 years,", ja: "過去20〜40年の間に、" },
+              { en: "which may be an early warning sign", ja: "そしてそれは早期警告のサインかもしれない" },
+              { en: "that the population is at risk of declining,\"", ja: "個体数が減少するリスクにあるという」と" },
+              { en: "Kevin Bierlich, an assistant professor at Oregon State University", ja: "オレゴン州立大学の助教であり" },
+              { en: "and co-author of the paper in Global Change Biology,", ja: "Global Change Biology誌の論文の共著者であるケビン・ビアリック氏は" },
+              { en: "told AFP on Thursday.", ja: "木曜日にAFP通信に語った。" }
+            ],
+            jpCloze: "「今、我々はコククジラの{{体長}}が過去20-40年の間に{{縮小}}し続けていることを学んだが、それはそのクジラに頭数{{減少}}のリスクがあるという{{早期警告}}のサインかもしれない」とGlobal Change Biology誌に掲載された論文の{{共著者}}でオレゴン州立大学の{{助教}}Kevin Bierlich氏は木曜日、AFP通信に語った。",
+            grammarNote: "which は前の節全体を受ける非制限用法の関係代名詞。at risk of -ing は「〜する危険にさらされて」。",
+            vocab: [
+              { en: "early warning sign", ja: "早期警告のサイン", pos: "名" },
+              { en: "at risk of ~", ja: "〜のリスクがある", pos: "熟" },
+              { en: "decline", ja: "減少する、低下する", pos: "動" },
+              { en: "assistant professor", ja: "助教", pos: "名" },
+              { en: "co-author", ja: "共著者", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-7",
+            label: "⑥",
+            chunks: [
+              { en: "By analyzing drone images", ja: "ドローン画像を分析することにより" },
+              { en: "taken from 2016-2022", ja: "2016〜2022年に撮影された" },
+              { en: "of 130 individuals", ja: "130頭の個体の" },
+              { en: "whose age was estimated or known,", ja: "年齢が推定または判明している、" },
+              { en: "the scientists found a striking trend:", ja: "科学者らは驚くべき傾向を発見した：" },
+              { en: "a gray whale born in 2020", ja: "2020年に生まれたコククジラは" },
+              { en: "is likely to reach a full-grown adult length", ja: "成長した成体の体長に達する可能性が高い" },
+              { en: "of approximately 1.65 meters (5ft 5in) less", ja: "約1.65メートル（5フィート5インチ）短い" },
+              { en: "than a counterpart born in 2000.", ja: "2000年に生まれた個体よりも。" }
+            ],
+            jpCloze: "年齢が{{推定}}される、あるいは判明している130頭の{{個体}}について2016年から2022年にかけて撮影したドローンの画像を{{分析}}することにより、科学者らは{{驚くべき傾向}}を発見した。2020年に生まれたコククジラは、2000年に生まれた個体より、成長した{{成体}}の体長が約1.65メートル（5フィート5インチ）短い長さまで{{達する}}にとどまる可能性が高い。",
+            grammarNote: "whose age was... は 130 individuals を修飾する所有格の関係代名詞。コロン（:）以降が a striking trend の具体的内容。",
+            vocab: [
+              { en: "analyze", ja: "分析する", pos: "動" },
+              { en: "individual", ja: "個体、個人", pos: "名" },
+              { en: "estimate", ja: "推定する、見積もる", pos: "動" },
+              { en: "striking", ja: "驚くべき、際立った", pos: "形" },
+              { en: "full-grown adult", ja: "成長した成体", pos: "名" },
+              { en: "approximately", ja: "約、おおよそ", pos: "副" }
+            ]
+          },
+          {
+            id: "u7-8",
+            label: "⑦-1",
+            chunks: [
+              { en: "This represents", ja: "これは〜を表している（示している）" },
+              { en: "a significant 13 percent decrease", ja: "著しい13%の減少を" },
+              { en: "in the total length of mature gray whales,", ja: "成熟した（成体の）コククジラの全長における、" },
+              { en: "which typically measure", ja: "それらは通常〜の大きさである" },
+              { en: "between 38-41 feet in length.", ja: "長さ38〜41フィートの間の。" }
+            ],
+            jpCloze: "これは{{成体}}になったコククジラ――{{通常}}長さ38-41フィートで測定される――の{{全長}}が13%も{{著しく減少}}したことを示している。",
+            grammarNote: "measure + 数値 は「（長さ・重さなどが）〜ある」という自動詞の用法。",
+            vocab: [
+              { en: "represent", ja: "〜を表す、示す", pos: "動" },
+              { en: "significant", ja: "著しい、重要な", pos: "形" },
+              { en: "mature", ja: "成熟した、成体の", pos: "形" },
+              { en: "typically", ja: "通常、一般的に", pos: "副" },
+              { en: "measure", ja: "（長さが）〜ある、測定する", pos: "動" }
+            ]
+          },
+          {
+            id: "u7-9",
+            label: "⑦-2",
+            chunks: [
+              { en: "Notably,", ja: "特に（注目すべきことに）、" },
+              { en: "the decline was more pronounced in females,", ja: "その減少はメスにおいてより顕著であった、" },
+              { en: "who historically exceeded males in size", ja: "メスは歴史的に体長でオスを上回っていたが" },
+              { en: "but are now comparable.", ja: "現在では同程度である。" }
+            ],
+            jpCloze: "特に、減少はメスにおいて{{より顕著}}であり、{{歴史}}的に体長でオスを{{上回って}}いたが、現在では{{同程度}}である。",
+            grammarNote: "pronounced はここでは形容詞で「顕著な、はっきりした」。動物に who を使って擬人化・親近感を表している。",
+            vocab: [
+              { en: "notably", ja: "特に、顕著に", pos: "副" },
+              { en: "pronounced", ja: "顕著な、明白な", pos: "形" },
+              { en: "exceed", ja: "〜を上回る、超える", pos: "動" },
+              { en: "comparable", ja: "同程度の、匹敵する", pos: "形" }
+            ]
+          },
+          {
+            id: "u7-10",
+            label: "⑧",
+            chunks: [
+              { en: "It would be the equivalent of", ja: "それは〜と同じことになるだろう" },
+              { en: "seeing the average height of an American woman", ja: "アメリカ人女性の平均身長が〜するのを見るのと" },
+              { en: "plummeting from 5ft 4in to 4ft 8in", ja: "5フィート4インチから4フィート8インチに急落する" },
+              { en: "over two decades.", ja: "20年間で。" }
+            ],
+            jpCloze: "それ（＝体長の減少）は、米国人女性の{{平均身長}}が20年間で5フィート4インチから4フィート8インチに{{急落}}したのと{{同等}}である。",
+            grammarNote: "the equivalent of ~ は「〜に相当するもの」。see + O + -ing（知覚動詞）で「Oが〜するのを見る」。",
+            vocab: [
+              { en: "equivalent", ja: "同等のもの、同義", pos: "名" },
+              { en: "average height", ja: "平均身長", pos: "名" },
+              { en: "plummet", ja: "急落する、激減する", pos: "動" },
+              { en: "decade", ja: "10年間", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-11",
+            label: "⑨-1",
+            chunks: [
+              { en: "Size matters —", ja: "サイズは重要である――" },
+              { en: "\"In general, size is critical for animals,\"", ja: "「一般的に、サイズは動物にとって極めて重要である」と" },
+              { en: "said Enrico Pirotta,", ja: "エンリコ・ピロッタ氏は述べた、" },
+              { en: "lead author on the study", ja: "この研究の筆頭著者であり" },
+              { en: "and a researcher at the University of St. Andrews in Scotland.", ja: "スコットランドのセント・アンドリュース大学の研究者である。" }
+            ],
+            jpCloze: "「サイズは{{重要である}}」――「{{一般的に}}、サイズは動物にとって重要である」と研究の{{筆頭著者}}で、スコットランドのセント・アンドリュース大学の{{研究者}}であるEnrico Pirotta氏は言う。",
+            grammarNote: "動詞 matter は「重要である」。critical は「極めて重要な、決定的な」。",
+            vocab: [
+              { en: "matter", ja: "重要である", pos: "動" },
+              { en: "in general", ja: "一般的に", pos: "熟" },
+              { en: "critical", ja: "極めて重要な、重大な", pos: "形" },
+              { en: "lead author", ja: "筆頭著者", pos: "名" }
+            ]
+          },
+          {
+            id: "u7-12",
+            label: "⑨-2",
+            chunks: [
+              { en: "\"It affects", ja: "「それ（体長の減少）は影響を与える" },
+              { en: "their behavior, their physiology, their life history,", ja: "彼らの行動、生理機能、生活史に、" },
+              { en: "and it has cascading effects", ja: "そして連鎖的な影響をもたらす" },
+              { en: "for the animals", ja: "その動物たちや" },
+              { en: "and for the community they're a part of.\"", ja: "彼らが一部となっているコミュニティに。」" }
+            ],
+            jpCloze: "「それ（＝体長の減少）は{{行動}}、{{生理機能}}、生活史に{{影響し}}、その動物や彼らが{{一部}}となっているコミュニティに{{連鎖的}}な影響を与えるのです。」",
+            grammarNote: "community の後ろに関係代名詞 that/which が省略されている（the community [that] they're a part of）。",
+            vocab: [
+              { en: "affect", ja: "〜に影響を与える", pos: "動" },
+              { en: "behavior", ja: "行動", pos: "名" },
+              { en: "physiology", ja: "生理機能、生理学", pos: "名" },
+              { en: "cascading", ja: "連鎖的な、次々に起こる", pos: "形" }
+            ]
+          },
+          {
+            id: "u7-13",
+            label: "⑩",
+            chunks: [
+              { en: "Smaller whale calves", ja: "より小型の子クジラは" },
+              { en: "may have lower survival rates", ja: "生存率が低下する可能性がある" },
+              { en: "when they stop weaning,", ja: "離乳を止めるときに、" },
+              { en: "while for adults,", ja: "一方で成体にとっては、" },
+              { en: "the major concern is reproductive success.", ja: "大きな懸念は繁殖の成功である。" }
+            ],
+            jpCloze: "小型の{{子}}クジラは{{離乳}}を止めると{{生存率}}が低下する可能性がある。一方、成体にとっての大きな{{懸念}}は{{繁殖}}の成功である。",
+            grammarNote: "while は対比の接続詞「一方で」。calves は calf（子牛・子クジラ）の複数形。",
+            vocab: [
+              { en: "calf (calves)", ja: "（クジラ・牛などの）子ども", pos: "名" },
+              { en: "weaning", ja: "離乳", pos: "名" },
+              { en: "major concern", ja: "大きな懸念・関心事", pos: "名" },
+              { en: "while", ja: "一方で", pos: "接" }
+            ]
+          },
+          {
+            id: "u7-14",
+            label: "⑪",
+            chunks: [
+              { en: "The species relies on energy reserves", ja: "この種は蓄えたエネルギーに頼っている" },
+              { en: "stored during the feeding season", ja: "摂食期に蓄えられた" },
+              { en: "to support the demands", ja: "需要を支えるために" },
+              { en: "of migration and reproduction during winter —", ja: "冬の移動と繁殖の――" },
+              { en: "and the question arises", ja: "そして疑問が生じる" },
+              { en: "whether they are able to put enough energy", ja: "彼らが十分なエネルギーを注げるかどうか" },
+              { en: "towards reproduction", ja: "繁殖と" },
+              { en: "and keeping the population growing.", ja: "頭数の増加を維持することに向けて。" }
+            ],
+            jpCloze: "この種は、冬の{{移動}}と{{繁殖}}の需要を支えるために、{{摂食期}}に蓄えたエネルギーに{{頼っている}}。そしてそこから、彼らが{{繁殖}}や頭数の{{増加}}の維持に向けて十分なエネルギーを持てるかどうかという疑問が{{生じる}}。",
+            grammarNote: "the question arises whether ~ は主語 the question の同格節 whether ~ が長いため後ろに回された語順。",
+            vocab: [
+              { en: "rely on ~", ja: "〜に頼る、依存する", pos: "熟" },
+              { en: "energy reserve", ja: "蓄えたエネルギー、エネルギー備蓄", pos: "名" },
+              { en: "migration", ja: "移動、回遊", pos: "名" },
+              { en: "arise", ja: "（問題・疑問などが）生じる", pos: "動" },
+              { en: "keep O -ing", ja: "Oを〜し続けさせる", pos: "熟" }
+            ]
+          }
+        ]
+      },
+
+      unit9: {
+        badge: "Unit 9",
+        titleEn: "Toyota plans 1st Level 4 self-driving service",
+        titleJa: "トヨタ、最初のレベル4の自動運転サービスを計画",
+        sentences: [
+          {
+            id: "u9-1",
+            label: "①",
+            chunks: [
+              { en: "Toyota Motor Corp. will begin", ja: "トヨタ自動車は開始する予定だ" },
+              { en: "a self-driving transportation service", ja: "自動運転輸送サービスを" },
+              { en: "in Odaiba, Tokyo, this summer", ja: "東京・お台場で今夏に" },
+              { en: "using the technology of Level 4 autonomous driving —", ja: "レベル4の自律走行技術を活用して――" },
+              { en: "automated driving under certain conditions —", ja: "一定条件下での自動運転である――" },
+              { en: "with the aim of starting", ja: "〜を開始する目標を持って" },
+              { en: "a driverless robotaxi business in the future,", ja: "将来的に運転手のいないロボットタクシー事業を、" },
+              { en: "sources said.", ja: "情報筋は述べた。" }
+            ],
+            jpCloze: "{{情報筋}}によれば、トヨタ自動車は今夏、東京・お台場でレベル4（{{一定条件}}下での{{自動}}運転）の{{自律}}走行技術を活用した自動運転輸送サービスを開始し、将来的には{{運転手}}のいないロボットタクシー事業を開始する{{目標}}を持っている。",
+            grammarNote: "ダッシュ（—）の間で Level 4 autonomous driving を言い換えて説明している。with the aim of -ing は「〜する目的・目標で」。",
+            vocab: [
+              { en: "autonomous driving", ja: "自律走行、自動運転", pos: "名" },
+              { en: "under certain conditions", ja: "一定条件下で", pos: "熟" },
+              { en: "with the aim of ~", ja: "〜の目的・目標を持って", pos: "熟" },
+              { en: "driverless", ja: "運転手のいない、無人の", pos: "形" },
+              { en: "sources", ja: "情報筋、関係者", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-2",
+            label: "②-1",
+            chunks: [
+              { en: "The current service will operate", ja: "現在のサービスは運行する予定だ" },
+              { en: "free of charge", ja: "無料で" },
+              { en: "within an area of 1.5 square kilometers", ja: "1.5平方キロメートルのエリア内で" },
+              { en: "around the new arena", ja: "新アリーナの周囲の" },
+              { en: "that Toyota and other entities", ja: "トヨタ自動車などが" },
+              { en: "are currently constructing in Odaiba.", ja: "お台場に現在建設中の。" }
+            ],
+            jpCloze: "{{現在}}のサービスは、トヨタ自動車などがお台場に現在{{建設中の}}新アリーナの周囲1.5{{平方}}キロメートルのエリア内で{{無料で}}運行する。",
+            grammarNote: "free of charge は「無料で」。that 以下は the new arena を修飾する目的格の関係代名詞節。",
+            vocab: [
+              { en: "current", ja: "現在の、現行の", pos: "形" },
+              { en: "free of charge", ja: "無料で", pos: "熟" },
+              { en: "square kilometer", ja: "平方キロメートル", pos: "名" },
+              { en: "entity", ja: "企業、団体、組織", pos: "名" },
+              { en: "construct", ja: "建設する", pos: "動" }
+            ]
+          },
+          {
+            id: "u9-3",
+            label: "②-2",
+            chunks: [
+              { en: "From 2025", ja: "2025年からは" },
+              { en: "the company plans to switch", ja: "同社は切り替える計画だ" },
+              { en: "to a paid service", ja: "有料サービスに" },
+              { en: "and expand its range", ja: "そして範囲を拡大する" },
+              { en: "to other districts of central Tokyo.", ja: "東京都心の他の地区に。" }
+            ],
+            jpCloze: "2025年からは{{有料}}サービスに{{切り替え}}、東京都心の他の地区に{{範囲}}を{{拡大}}する計画だ。",
+            grammarNote: "plans to [switch ...] and [expand ...] の並列構造。switch to ~ で「〜に切り替える」。",
+            vocab: [
+              { en: "switch to ~", ja: "〜に切り替える", pos: "熟" },
+              { en: "paid service", ja: "有料サービス", pos: "名" },
+              { en: "expand", ja: "拡大する", pos: "動" },
+              { en: "district", ja: "地区、区域", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-4",
+            label: "②-3",
+            chunks: [
+              { en: "It is likely to be", ja: "それは〜になりそうだ" },
+              { en: "Japan's first automated driving service", ja: "日本初の自動運転サービスに" },
+              { en: "on public roads", ja: "公道での" },
+              { en: "with other vehicles.", ja: "他の車両と一緒に走る。" }
+            ],
+            jpCloze: "他の{{車両}}と一緒に{{公道}}を走る日本初の{{自動}}運転サービスになりそうだ。",
+            grammarNote: "be likely to + 動詞の原形は「〜しそうだ、〜する可能性が高い」。",
+            vocab: [
+              { en: "be likely to ~", ja: "〜しそうだ、〜する見込みだ", pos: "熟" },
+              { en: "public road", ja: "公道", pos: "名" },
+              { en: "vehicle", ja: "車両、乗り物", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-5",
+            label: "③-1",
+            chunks: [
+              { en: "The service will be provided", ja: "サービスは提供される予定だ" },
+              { en: "in cooperation with Monet Technologies Inc.,", ja: "モネ・テクノロジーズと協力して、" },
+              { en: "a company jointly funded by Toyota and SoftBank Corp.,", ja: "トヨタとソフトバンクの共同出資会社である、" },
+              { en: "utilizing a self-driving system", ja: "自動運転システムを活用して" },
+              { en: "from U.S. startup May Mobility.", ja: "米新興企業メイ・モビリティーの。" }
+            ],
+            jpCloze: "サービスはトヨタとソフトバンクの{{共同出資}}会社「モネ・テクノロジーズ」と{{協力}}して提供され、米{{新興}}企業メイ・モビリティーの自動運転システムを{{活用}}する。",
+            grammarNote: "a company jointly funded ... は Monet Technologies Inc. の同格説明。utilizing は付帯状況の分詞構文。",
+            vocab: [
+              { en: "in cooperation with ~", ja: "〜と協力して", pos: "熟" },
+              { en: "jointly funded", ja: "共同出資の", pos: "形" },
+              { en: "utilize", ja: "〜を活用する", pos: "動" },
+              { en: "startup", ja: "新興企業、スタートアップ", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-6",
+            label: "③-2",
+            chunks: [
+              { en: "Since the autumn of 2023,", ja: "2023年秋以降、" },
+              { en: "Toyota has discussed the service,", ja: "トヨタはサービス内容や" },
+              { en: "its operation routes and other details", ja: "運行ルート、その他の詳細について協議してきた" },
+              { en: "with the transport ministry, the industry ministry,", ja: "運輸省（国交省）、産業省（経産省）、" },
+              { en: "the National Police Agency", ja: "警察庁、" },
+              { en: "and the Tokyo Metropolitan government.", ja: "そして東京都と。" }
+            ],
+            jpCloze: "2023年{{秋}}以降、トヨタは{{運輸}}省、{{産業}}省、{{警察}}庁、東京都とサービス内容や{{運行}}ルート、その他の{{詳細}}について協議してきた。",
+            grammarNote: "discuss A with B は「BとAについて話し合う（協議する）」。他動詞なので discuss の直後に about は不要。",
+            vocab: [
+              { en: "operation route", ja: "運行ルート", pos: "名" },
+              { en: "detail", ja: "詳細", pos: "名" },
+              { en: "transport ministry", ja: "運輸省（国土交通省）", pos: "名" },
+              { en: "National Police Agency", ja: "警察庁", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-7",
+            label: "④-1",
+            chunks: [
+              { en: "The vehicle used for the service", ja: "サービスに使用する車両は" },
+              { en: "will be based on the Toyota minivan Sienna", ja: "トヨタのミニバン「シエナ」を基盤とし" },
+              { en: "and equipped with a danger prediction system", ja: "危険予測システムを搭載する" },
+              { en: "using sensors and artificial intelligence", ja: "センサーや人工知能を用いて" },
+              { en: "to monitor the road and surrounding conditions.", ja: "道路や周囲の状況を監視する。" }
+            ],
+            jpCloze: "サービスに使用する{{車両}}は、トヨタのミニバン「シエナ」を{{基盤}}とし、センサーや{{人工知能}}を用いて道路や{{周囲の状況}}を監視する危険{{予測}}システムを搭載する。",
+            grammarNote: "will be [based on ~] and [equipped with ~] の受動態並列。be equipped with ~ は「〜を搭載・装備している」。",
+            vocab: [
+              { en: "be based on ~", ja: "〜を基盤とする、基づく", pos: "熟" },
+              { en: "be equipped with ~", ja: "〜を搭載・装備している", pos: "熟" },
+              { en: "prediction", ja: "予測", pos: "名" },
+              { en: "monitor", ja: "監視する", pos: "動" },
+              { en: "surrounding conditions", ja: "周囲の状況", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-8",
+            label: "④-2",
+            chunks: [
+              { en: "It can run fully autonomously", ja: "それは完全自律走行が可能だ" },
+              { en: "without a driver,", ja: "ドライバーなしでも、" },
+              { en: "but for safety reasons", ja: "しかし安全上の理由で" },
+              { en: "the company plans to have a driver", ja: "同社はドライバーに〜させる予定だ" },
+              { en: "ride along temporarily.", ja: "一時的に同乗。" }
+            ],
+            jpCloze: "ドライバーなしでも{{完全自律}}走行が可能だが、安全上の{{理由}}で、{{一時}}的にドライバーを同乗させる予定だ。",
+            grammarNote: "have + O + 動詞の原形（使役動詞）で「Oに〜させる」。ride along は「同乗する」。",
+            vocab: [
+              { en: "fully autonomously", ja: "完全自律で", pos: "副" },
+              { en: "for safety reasons", ja: "安全上の理由で", pos: "熟" },
+              { en: "ride along", ja: "同乗する", pos: "熟" },
+              { en: "temporarily", ja: "一時的に", pos: "副" }
+            ]
+          },
+          {
+            id: "u9-9",
+            label: "⑤-1",
+            chunks: [
+              { en: "The service,", ja: "そのサービスは、" },
+              { en: "which will begin this summer and be provided free of charge,", ja: "今夏から開始し無料で提供されるのだが、" },
+              { en: "will have several vehicles operating", ja: "数台の車両を運行させることになる" },
+              { en: "during daytime hours", ja: "日中の時間に" },
+              { en: "between two designated locations in Odaiba.", ja: "お台場内の指定された2つの場所の間で。" }
+            ],
+            jpCloze: "今夏から開始し{{無料}}で提供されるそのサービスでは、{{日中の時間}}にお台場内の{{指定}}された2つの場所の間で数台の車両を{{運行}}させることになる。",
+            grammarNote: "主語 The service と動詞 will have の間に非制限用法の which 節が挿入されている。have + O + -ing で「Oを〜させておく（運行させる）」。",
+            vocab: [
+              { en: "operate", ja: "運行する、作動する", pos: "動" },
+              { en: "daytime hours", ja: "日中の時間", pos: "名" },
+              { en: "designated", ja: "指定された", pos: "形" },
+              { en: "location", ja: "場所、位置", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-10",
+            label: "⑤-2",
+            chunks: [
+              { en: "Passengers can only get in and out of the car", ja: "乗客は車の乗り降りができるのみだ" },
+              { en: "at limited places,", ja: "限られた場所でのみ、" },
+              { en: "such as the entrance of the facility.", ja: "施設の入り口などの。" }
+            ],
+            jpCloze: "{{乗客}}は施設の{{入り口}}などの{{限られた}}場所でのみ{{乗り降り}}ができる。",
+            grammarNote: "get in and out of ~ は「〜に乗り降りする」。",
+            vocab: [
+              { en: "passenger", ja: "乗客", pos: "名" },
+              { en: "get in and out of ~", ja: "〜に乗り降りする", pos: "熟" },
+              { en: "limited", ja: "限られた", pos: "形" },
+              { en: "entrance", ja: "入り口", pos: "名" },
+              { en: "facility", ja: "施設", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-11",
+            label: "⑥-1",
+            chunks: [
+              { en: "Toyota will use the free service", ja: "トヨタはその無料サービスを活用する" },
+              { en: "to examine safety and profitability.", ja: "安全性や採算性（収益性）を検討するために。" }
+            ],
+            jpCloze: "トヨタは安全性や{{採算性・収益性}}を{{検討}}する為に、その{{無料}}サービスを活用する。",
+            grammarNote: "to examine は目的を表す不定詞の副詞的用法「〜するために」。",
+            vocab: [
+              { en: "examine", ja: "検討する、調査する", pos: "動" },
+              { en: "profitability", ja: "採算性、収益性", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-12",
+            label: "⑥-2",
+            chunks: [
+              { en: "From 2025,", ja: "2025年以降、" },
+              { en: "the company will gradually expand the service", ja: "同社は段階的にサービスを拡大し" },
+              { en: "to other central Tokyo areas", ja: "他の都心部にも" },
+              { en: "and consider adding a fee.", ja: "そして有料化も検討する。" }
+            ],
+            jpCloze: "2025年以降、サービスを他の都心部にも{{段階的}}に{{拡大}}し、{{有料化}}も{{検討}}する。",
+            grammarNote: "consider + -ing は「〜することを検討する」（to不定詞はとらない点に注意）。add a fee = 料金を加える（有料化）。",
+            vocab: [
+              { en: "gradually", ja: "段階的に、徐々に", pos: "副" },
+              { en: "consider -ing", ja: "〜することを検討する", pos: "熟" },
+              { en: "fee", ja: "料金、手数料", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-13",
+            label: "⑥-3",
+            chunks: [
+              { en: "The company plans to eventually work", ja: "同社は最終的に連携する計画だ" },
+              { en: "with a ride hailing service company", ja: "配車サービス会社と" },
+              { en: "to make it possible", ja: "〜を可能にするために" },
+              { en: "to hail a vehicle to specific locations,", ja: "特定の場所まで車両を呼ぶことを、" },
+              { en: "like a taxi.", ja: "タクシーのように。" }
+            ],
+            jpCloze: "{{最終的}}には{{配車}}サービス会社と連携し、タクシーのように{{特定}}の場所まで車両を{{呼べる}}ようにする計画だ。",
+            grammarNote: "make it possible to ~ は形式目的語 it を使った頻出構文「〜することを可能にする」。動詞 hail は「（タクシーなどを）呼ぶ」。",
+            vocab: [
+              { en: "eventually", ja: "最終的に、いずれは", pos: "副" },
+              { en: "ride hailing service", ja: "配車サービス", pos: "名" },
+              { en: "hail", ja: "（タクシー・車両を）呼ぶ", pos: "動" },
+              { en: "specific", ja: "特定の", pos: "形" }
+            ]
+          },
+          {
+            id: "u9-14",
+            label: "⑦-1",
+            chunks: [
+              { en: "Self-driving is considered", ja: "自動運転は〜と考えられている" },
+              { en: "the core of next-generation technology", ja: "次世代技術の中核と" },
+              { en: "like other elements of so-called CASE,", ja: "いわゆるCASEと呼ばれる他の要素と同様に、" },
+              { en: "an acronym for connected, autonomous, shared and electric.", ja: "connected, autonomous, shared, electricの頭字語である。" }
+            ],
+            jpCloze: "自動運転は、connected, autonomous, shared, electricの{{頭字語}}である、{{いわゆる}}CASEと呼ばれる他の{{要素}}と同様に、{{次世代}}技術の{{中核}}と考えられている。",
+            grammarNote: "be considered + C で「Cとみなされる・考えられる」。an acronym for ... は CASE の同格説明。",
+            vocab: [
+              { en: "core", ja: "中核、中心", pos: "名" },
+              { en: "next-generation", ja: "次世代の", pos: "形" },
+              { en: "element", ja: "要素", pos: "名" },
+              { en: "so-called", ja: "いわゆる", pos: "形" },
+              { en: "acronym", ja: "頭字語（頭文字をつないだ語）", pos: "名" }
+            ]
+          },
+          {
+            id: "u9-15",
+            label: "⑦-2",
+            chunks: [
+              { en: "Automakers and technology companies", ja: "自動車メーカーやテクノロジー企業は" },
+              { en: "around the world", ja: "世界中の" },
+              { en: "have been competing with each other", ja: "互いに競い合っている" },
+              { en: "to develop the technology.", ja: "その技術を開発するために。" }
+            ],
+            jpCloze: "世界中の自動車メーカーやテクノロジー企業は技術を{{開発}}する為に、{{互い}}に{{競い合っている}}。",
+            grammarNote: "have been competing は現在完了進行形「（ずっと）競い合い続けている」。",
+            vocab: [
+              { en: "automaker", ja: "自動車メーカー", pos: "名" },
+              { en: "compete with ~", ja: "〜と競い合う", pos: "熟" },
+              { en: "develop", ja: "開発する", pos: "動" }
+            ]
+          },
+          {
+            id: "u9-16",
+            label: "⑦-3",
+            chunks: [
+              { en: "Toyota hopes to improve", ja: "トヨタは向上させたいと考えている" },
+              { en: "its autonomous driving technology", ja: "自社の自動運転技術を" },
+              { en: "and deepen society's understanding of it", ja: "そしてそれに対する社会の理解を深めたいと" },
+              { en: "by overtaking other companies in Japan", ja: "日本の他社に先駆ける（追い抜く）ことで" },
+              { en: "to roll out self-driving services on public roads.", ja: "公道での自動運転サービスを展開するために。" }
+            ],
+            jpCloze: "トヨタは、日本で公道での自動運転サービスを{{展開する}}ために他社{{に先駆ける}}ことで、自動運転技術を{{向上}}させ、社会の理解を{{深めたい}}と考えている。",
+            grammarNote: "hopes to [improve ...] and [deepen ...]。overtake は「追い抜く、先駆ける」、roll out は「（新サービスなどを）展開する、開始する」。",
+            vocab: [
+              { en: "improve", ja: "向上させる、改善する", pos: "動" },
+              { en: "deepen", ja: "深める", pos: "動" },
+              { en: "overtake", ja: "〜に先駆ける、追い抜く", pos: "動" },
+              { en: "roll out", ja: "展開する、本格導入する", pos: "熟" }
+            ]
+          },
+          {
+            id: "u9-17",
+            label: "⑦-4",
+            chunks: [
+              { en: "The firm also plans", ja: "同社はまた予定している" },
+              { en: "to develop its map data,", ja: "地図データを開発することを、" },
+              { en: "which is indispensable", ja: "それは欠かせないものである" },
+              { en: "in automated driving.", ja: "自動運転において。" }
+            ],
+            jpCloze: "また、自動運転に{{欠かせない}}地図データを{{開発する}}予定だ。",
+            grammarNote: "which is indispensable ... は map data を補足説明する関係代名詞。indispensable は「不可欠な、欠かせない」。",
+            vocab: [
+              { en: "firm", ja: "企業、会社", pos: "名" },
+              { en: "indispensable", ja: "欠かせない、不可欠な", pos: "形" }
+            ]
+          }
+        ]
+      },
+
+      unit12: {
+        badge: "Unit 12",
+        titleEn: "Japan, U.S. institutes to jointly develop AI for scientific research",
+        titleJa: "日米の研究所が科学研究用の人工知能を共同で開発へ",
+        sentences: [
+          {
+            id: "u12-1",
+            label: "①-1",
+            chunks: [
+              { en: "The Japanese and U.S. governments", ja: "日米両政府は" },
+              { en: "will collaborate", ja: "協力する予定だ" },
+              { en: "on the development of artificial intelligence (AI)", ja: "人工知能(AI)の開発において" },
+              { en: "specialized for scientific research,", ja: "科学研究に特化した、" },
+              { en: "it has been learned.", ja: "〜ということがわかった。" }
+            ],
+            jpCloze: "日米両{{政府}}が、科学研究に{{特化}}した人工知能(AI)の開発で{{協力}}することがわかった。",
+            grammarNote: "文末の , it has been learned. は新聞英語でよく使われる表現で「〜であることが分かった（判明した）」。",
+            vocab: [
+              { en: "collaborate", ja: "協力する、共同作業する", pos: "動" },
+              { en: "specialized for ~", ja: "〜に特化した", pos: "熟" },
+              { en: "scientific research", ja: "科学研究", pos: "名" },
+              { en: "it has been learned", ja: "〜ということがわかった", pos: "熟" }
+            ]
+          },
+          {
+            id: "u12-2",
+            label: "①-2",
+            chunks: [
+              { en: "The joint efforts", ja: "共同の取り組みは" },
+              { en: "will include data sharing", ja: "データ共有を含む予定だ" },
+              { en: "for training AI", ja: "AIを訓練するための" },
+              { en: "and the joint use of supercomputers", ja: "そしてスーパーコンピューターの共同利用を" },
+              { en: "for AI development.", ja: "AI開発のための。" }
+            ],
+            jpCloze: "{{共同}}の取り組みには、AIを訓練するためのデータ{{共有}}やAI{{開発}}のためのスーパーコンピューターの{{共同}}利用が含まれる。",
+            grammarNote: "include の目的語が data sharing ... と the joint use ... の2つ。",
+            vocab: [
+              { en: "joint", ja: "共同の、合同の", pos: "形" },
+              { en: "effort", ja: "取り組み、努力", pos: "名" },
+              { en: "data sharing", ja: "データ共有", pos: "名" },
+              { en: "train", ja: "（AIなどを）訓練する、学習させる", pos: "動" }
+            ]
+          },
+          {
+            id: "u12-3",
+            label: "①-3",
+            chunks: [
+              { en: "The allied countries will work together", ja: "（日米の）同盟国は協力を行う" },
+              { en: "in response to", ja: "〜に対応して" },
+              { en: "the anticipated intensified competition,", ja: "予想される競争激化に、" },
+              { en: "accelerated by AI,", ja: "AIによって加速する、" },
+              { en: "for scientific discoveries among countries.", ja: "国家間の科学的発見をめぐる。" }
+            ],
+            jpCloze: "AIによって加速する科学的{{発見}}をめぐる国家間の{{競争激化}}が予想されることに対応し、（日米の）{{同盟}}国は協力を行う。",
+            grammarNote: "anticipated（予想される）と intensified（激化した）の2つの過去分詞が competition を前から修飾し、accelerated by AI が後ろから補足している。",
+            vocab: [
+              { en: "allied", ja: "同盟の", pos: "形" },
+              { en: "in response to ~", ja: "〜に対応して、応じて", pos: "熟" },
+              { en: "anticipated", ja: "予想される、期待される", pos: "形" },
+              { en: "intensified", ja: "激化した、強まった", pos: "形" },
+              { en: "accelerate", ja: "加速させる", pos: "動" }
+            ]
+          },
+          {
+            id: "u12-4",
+            label: "②",
+            chunks: [
+              { en: "The Japan-U.S. collaboration", ja: "日米の連携は" },
+              { en: "is expected to be led", ja: "主導される（進められる）見通しだ" },
+              { en: "through cooperation between the government-affiliated research institutes", ja: "政府系研究機関の協力を通じて" },
+              { en: "of RIKEN,", ja: "理化学研究所（理研）と――" },
+              { en: "which is under the jurisdiction of the Education, Culture, Sports, Science and Technology Ministry,", ja: "文部科学省の所管である――" },
+              { en: "and Argonne National Laboratory,", ja: "アルゴンヌ国立研究所の" },
+              { en: "which is under the U.S. Energy Department.", ja: "米国エネルギー省所管の。" }
+            ],
+            jpCloze: "日米の{{連携}}は、文部科学省の{{所管}}の理化学研究所（理研）と米国エネルギー省所管のアルゴンヌ国立研究所の政府{{系}}研究機関を通じて{{進められる}}見通しだ。",
+            grammarNote: "長い文だが骨格は「A is expected to be led through cooperation between B (RIKEN) and C (Argonne)」。2つの which 節がそれぞれの所管省庁を説明。",
+            vocab: [
+              { en: "be expected to ~", ja: "〜する見通しだ、予定だ", pos: "熟" },
+              { en: "government-affiliated", ja: "政府系の、政府傘下の", pos: "形" },
+              { en: "under the jurisdiction of ~", ja: "〜の所管・管轄下で", pos: "熟" },
+              { en: "research institute", ja: "研究機関、研究所", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-5",
+            label: "③-1",
+            chunks: [
+              { en: "RIKEN and Argonne are home to", ja: "理研とアルゴンヌは〜を所有している（置いている）" },
+              { en: "two of the world's top ranked", ja: "世界トップクラスの2つの" },
+              { en: "high-performance supercomputers —", ja: "高性能スーパーコンピューターを――" },
+              { en: "Fugaku at RIKEN", ja: "理研の「富岳」と" },
+              { en: "and Aurora at Argonne.", ja: "アルゴンヌの「オーロラ」である。" }
+            ],
+            jpCloze: "理研とアルゴンヌは世界トップクラスの{{性能}}を持つスパコンのうち2つ――理研は「富岳」、アルゴンヌは「オーロラ」――を{{所有している}}。",
+            grammarNote: "be home to ~ は「〜の本拠地である、〜を有している（所有している）」。",
+            vocab: [
+              { en: "be home to ~", ja: "〜を所有している、〜の本拠である", pos: "熟" },
+              { en: "top ranked", ja: "トップクラスの、最上位の", pos: "形" },
+              { en: "high-performance", ja: "高性能の", pos: "形" }
+            ]
+          },
+          {
+            id: "u12-6",
+            label: "③-2",
+            chunks: [
+              { en: "As AI development requires", ja: "AIの開発には〜が必要になるため" },
+              { en: "a large amount of computation,", ja: "大量の計算処理が、" },
+              { en: "both supercomputers will be utilized,", ja: "両方のスパコンが活用され、" },
+              { en: "and cooperation will be deepened", ja: "連携が深められる予定だ" },
+              { en: "in sharing data and results.", ja: "データや結果の共有において。" }
+            ],
+            jpCloze: "AIの開発には{{大量の計算}}が必要になるため、両スパコンが{{活用され}}、データや{{結果}}の{{共有}}で連携を深める。",
+            grammarNote: "文頭の As は理由の接続詞「〜なので、〜のため」。utilize は use の少しかしこまった語。",
+            vocab: [
+              { en: "require", ja: "〜を必要とする", pos: "動" },
+              { en: "computation", ja: "計算、演算処理", pos: "名" },
+              { en: "utilize", ja: "〜を活用する、利用する", pos: "動" },
+              { en: "deepen", ja: "〜を深める", pos: "動" }
+            ]
+          },
+          {
+            id: "u12-7",
+            label: "③-3",
+            chunks: [
+              { en: "The two sides", ja: "両者は" },
+              { en: "aim to reach an agreement", ja: "合意に達することを目指している" },
+              { en: "this spring.", ja: "今年の春に。" }
+            ],
+            jpCloze: "両者は今年の{{春}}に、{{合意}}に達することを{{目指している}}。",
+            grammarNote: "aim to + 動詞の原形「〜することを目指す」。reach an agreement「合意に達する」。",
+            vocab: [
+              { en: "aim to ~", ja: "〜することを目指す", pos: "熟" },
+              { en: "reach an agreement", ja: "合意に達する", pos: "熟" }
+            ]
+          },
+          {
+            id: "u12-8",
+            label: "④-1",
+            chunks: [
+              { en: "The Japanese and U.S. governments", ja: "日米両政府は" },
+              { en: "have already separately begun", ja: "すでに別々に始めている" },
+              { en: "to develop AI that is specialized for research", ja: "研究に特化したAIを開発することを" },
+              { en: "by inputting data results", ja: "データの結果を入力することで" },
+              { en: "from experiments and research papers.", ja: "実験や研究論文からの。" }
+            ],
+            jpCloze: "日米両政府は{{別々に}}{{実験}}や論文データの結果を入力し、研究に{{特化}}したAI{{開発}}をすでに始めていた。",
+            grammarNote: "by -ing は手段「〜することによって」。separately は「別々に、それぞれ独自に」。",
+            vocab: [
+              { en: "separately", ja: "別々に、個別に", pos: "副" },
+              { en: "input", ja: "〜を入力する", pos: "動" },
+              { en: "experiment", ja: "実験", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-9",
+            label: "④-2",
+            chunks: [
+              { en: "Japan plans to focus its development", ja: "日本は開発に重点を置く計画だ" },
+              { en: "on the life and medical science field,", ja: "生命・医学分野に、" },
+              { en: "such as drug discovery,", ja: "新薬開発などの、" },
+              { en: "as well as the materials field,", ja: "だけでなく材料（素材）分野にも、" },
+              { en: "such as new materials.", ja: "新素材などの。" }
+            ],
+            jpCloze: "日本は、{{新素材}}などの{{材料}}分野だけでなく、{{新薬開発}}などの生命・{{医学}}分野の開発に{{重点を置く}}計画を立てている。",
+            grammarNote: "A as well as B は「BだけでなくAも」。和訳するときは後ろの B（材料分野）から訳すと自然な日本語になる！",
+            vocab: [
+              { en: "medical science", ja: "医学", pos: "名" },
+              { en: "drug discovery", ja: "創薬、新薬開発", pos: "名" },
+              { en: "A as well as B", ja: "BだけでなくAも", pos: "熟" },
+              { en: "material", ja: "材料、素材", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-10",
+            label: "④-3",
+            chunks: [
+              { en: "The Japanese government also plans", ja: "日本政府はまた計画している" },
+              { en: "to make the developed AI available", ja: "開発したAIを利用可能にすることを" },
+              { en: "to companies and universities", ja: "企業や大学に対して" },
+              { en: "to strengthen Japan's industrial competitiveness.", ja: "日本の産業競争力を強化するために。" }
+            ],
+            jpCloze: "日本政府はまた、開発したAIを企業や{{大学}}が{{使える}}ようにし、日本の産業{{競争力}}を{{強化}}する計画だ。",
+            grammarNote: "make + O + available to ~ は「Oを〜が利用できるようにする」という重要構文（第5文型 SVOC）。",
+            vocab: [
+              { en: "make O available to ~", ja: "Oを〜が使えるようにする", pos: "熟" },
+              { en: "strengthen", ja: "〜を強化する", pos: "動" },
+              { en: "industrial", ja: "産業の、工業の", pos: "形" },
+              { en: "competitiveness", ja: "競争力", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-11",
+            label: "④-4",
+            chunks: [
+              { en: "The ministry has earmarked", ja: "同省は計上している（充てている）" },
+              { en: "about ¥12 billion", ja: "約120億円を" },
+              { en: "for development", ja: "開発費として" },
+              { en: "in the fiscal 2023 supplementary budget.", ja: "2023年度補正予算に。" }
+            ],
+            jpCloze: "同省は2023年度{{補正予算}}に開発費として約120億円を{{計上}}している。",
+            grammarNote: "earmark は「（資金・予算を特定の目的に）充てる、計上する」。billion は10億なので 12 billion = 120億。",
+            vocab: [
+              { en: "earmark", ja: "（予算などを）計上する、充てる", pos: "動" },
+              { en: "fiscal", ja: "会計年度の、財政の", pos: "形" },
+              { en: "supplementary budget", ja: "補正予算", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-12",
+            label: "⑤-1",
+            chunks: [
+              { en: "The United States has also announced", ja: "米国もまた発表している" },
+              { en: "that Argonne will develop large-scale AI", ja: "アルゴンヌ研究所が大規模なAIを開発することを" },
+              { en: "for scientific research", ja: "科学研究を目的とした" },
+              { en: "in such fields as climate, cancer and space.", ja: "気候、がん、宇宙などの分野での。" }
+            ],
+            jpCloze: "米国も、アルゴンヌ研究所が{{気候}}やがん、{{宇宙}}などの{{分野}}での科学研究を目的とした{{大規模}}AIを開発することを{{発表}}している。",
+            grammarNote: "such + 名詞 + as A, B and C で「AやB、Cのような名詞」。",
+            vocab: [
+              { en: "announce", ja: "発表する", pos: "動" },
+              { en: "large-scale", ja: "大規模な", pos: "形" },
+              { en: "cancer", ja: "がん", pos: "名" },
+              { en: "field", ja: "分野、領域", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-13",
+            label: "⑤-2",
+            chunks: [
+              { en: "The development of high-performance AI", ja: "高性能AIの開発は" },
+              { en: "requires high-quality data,", ja: "高品質なデータを必要とするため、" },
+              { en: "so Japan and the U.S. sharing data and research results", ja: "日米がデータや研究結果を共有することは" },
+              { en: "with each other", ja: "互いに" },
+              { en: "could lead to the development", ja: "開発につながる可能性がある" },
+              { en: "of highly accurate AI.", ja: "精度の高いAIの。" }
+            ],
+            jpCloze: "{{高性能}}AIの開発には{{高品質}}なデータを必要とすることから、日米がデータや研究{{結果}}を{{互い}}に{{共有}}することは、{{精度}}の高いAIの開発に{{つながる}}可能性がある。",
+            grammarNote: "Japan and the U.S. sharing ... は動名詞の意味上の主語（日米が〜を共有すること）。lead to ~「〜につながる」。",
+            vocab: [
+              { en: "high-quality", ja: "高品質な", pos: "形" },
+              { en: "each other", ja: "互いに", pos: "熟" },
+              { en: "lead to ~", ja: "〜につながる", pos: "熟" },
+              { en: "highly accurate", ja: "精度の高い、非常に正確な", pos: "形" }
+            ]
+          },
+          {
+            id: "u12-14",
+            label: "⑥-1",
+            chunks: [
+              { en: "AI allows for", ja: "AIは〜を可能にする" },
+              { en: "the analysis of large amounts of data", ja: "大量のデータの解析を" },
+              { en: "in a short period of time.", ja: "短時間で。" }
+            ],
+            jpCloze: "AIは{{短時間}}で大量のデータの{{解析}}を{{可能}}にする。",
+            grammarNote: "allow for ~ は「〜を可能にする、〜の余地を与える」。無生物主語（AI）をすっきりと訳す練習に最適。",
+            vocab: [
+              { en: "allow for ~", ja: "〜を可能にする", pos: "熟" },
+              { en: "analysis", ja: "解析、分析", pos: "名" },
+              { en: "in a short period of time", ja: "短時間で", pos: "熟" }
+            ]
+          },
+          {
+            id: "u12-15",
+            label: "⑥-2",
+            chunks: [
+              { en: "According to RIKEN's estimates,", ja: "理研の見積りでは、" },
+              { en: "if AI for scientific research is developed,", ja: "科学研究用のAIが開発されれば、" },
+              { en: "it may be possible to reduce", ja: "短縮することが可能になるかもしれない" },
+              { en: "the amount of time for drug research", ja: "医薬品の研究にかかる期間を" },
+              { en: "from about two years to about two months,", ja: "約2年から約2カ月に、" },
+              { en: "and to expand the range of research", ja: "そして研究の範囲を拡大することも" },
+              { en: "by 1,000 times wider", ja: "1,000倍広く" },
+              { en: "than through conventional methods.", ja: "従来の方法に比べて。" }
+            ],
+            jpCloze: "理研の{{見積り}}では、{{科学研究}}用のAIが開発されれば、医薬品の{{研究}}期間を約2年から約2カ月に{{短縮}}したり、研究の{{範囲}}を{{従来}}の方法に比べて1,000倍も{{拡大}}できる可能性がある。",
+            grammarNote: "it may be possible [to reduce ...] and [to expand ...] の形式主語構文。2つの to 不定詞が並列になっている。",
+            vocab: [
+              { en: "according to ~", ja: "〜によると", pos: "熟" },
+              { en: "estimate", ja: "見積り、試算", pos: "名" },
+              { en: "reduce", ja: "短縮する、減らす", pos: "動" },
+              { en: "expand", ja: "拡大する、広げる", pos: "動" },
+              { en: "range", ja: "範囲、幅", pos: "名" },
+              { en: "conventional", ja: "従来の、これまでの", pos: "形" }
+            ]
+          },
+          {
+            id: "u12-16",
+            label: "⑦-1",
+            chunks: [
+              { en: "Some have argued", ja: "主張する人々がいる" },
+              { en: "that the use of AI in research", ja: "研究におけるAIの利用は" },
+              { en: "will have a significant impact on society", ja: "社会に甚大な影響を与えるだろうと" },
+              { en: "due to the rapid increase in scientific discoveries", ja: "科学的発見の急速な増加によって" },
+              { en: "and that the risks should be discussed as well.", ja: "そしてリスクについても同様に議論されるべきだと。" }
+            ],
+            jpCloze: "AIの研究利用は科学的発見の{{急速}}な{{増加}}によって社会に{{甚大な}}影響を与える可能性が高く、そのリスクについても{{議論されるべき}}と主張する人々がいる。",
+            grammarNote: "argued の目的語として that 節が2つ（that ... and that ...）並列になっている点に注目！",
+            vocab: [
+              { en: "argue", ja: "主張する、議論する", pos: "動" },
+              { en: "significant impact", ja: "甚大な・大きな影響", pos: "名" },
+              { en: "due to ~", ja: "〜によって、〜が原因で", pos: "熟" },
+              { en: "rapid increase", ja: "急速な増加", pos: "名" },
+              { en: "as well", ja: "〜もまた、同様に", pos: "熟" }
+            ]
+          },
+          {
+            id: "u12-17",
+            label: "⑦-2",
+            chunks: [
+              { en: "There are also concerns", ja: "また懸念もある" },
+              { en: "that AI may deprive researchers", ja: "AIが研究者から奪うかもしれないという" },
+              { en: "of their creativity.", ja: "彼らの創造性を。" }
+            ],
+            jpCloze: "また、AIが研究者から{{創造性}}を{{奪う}}のではないかという{{懸念}}もある。",
+            grammarNote: "deprive A of B は超重要熟語「AからBを奪う」。that 節は concerns の内容を説明する同格の that。",
+            vocab: [
+              { en: "concern", ja: "懸念、心配", pos: "名" },
+              { en: "deprive A of B", ja: "AからBを奪う", pos: "熟" },
+              { en: "creativity", ja: "創造性", pos: "名" }
+            ]
+          },
+          {
+            id: "u12-18",
+            label: "⑦-3",
+            chunks: [
+              { en: "Therefore,", ja: "そのため、" },
+              { en: "the ministry will limit", ja: "同省は制限する予定だ" },
+              { en: "AI involvement in research", ja: "研究へのAIの関与を" },
+              { en: "to certain tasks,", ja: "特定の作業・業務に、" },
+              { en: "such as experiments.", ja: "実験などの。" }
+            ],
+            jpCloze: "そのため、同省はAIの研究への{{関与}}を{{実験}}等の特定の{{作業}}に{{制限}}する予定だ。",
+            grammarNote: "limit A to B で「AをBに制限する」。",
+            vocab: [
+              { en: "therefore", ja: "そのため、したがって", pos: "副" },
+              { en: "limit A to B", ja: "AをBに制限する", pos: "熟" },
+              { en: "involvement", ja: "関与、参加", pos: "名" },
+              { en: "certain task", ja: "特定の作業・業務", pos: "名" }
+            ]
+          }
+        ]
+      }
+    };
+
+    /* =========================================================================
+       アプリの状態管理
+    ========================================================================= */
+    const STORAGE_KEY_MASTERED = "slash_translation_mastered_v1";
+    const STORAGE_KEY_THEME = "slash_translation_theme_v1";
+
+    let state = {
+      currentUnit: "unit9",      // 新規追加した Unit 9 を初期表示
+      currentMode: "slash",      // 'slash' | 'quiz' | 'worksheet'
+      slashLayout: "focus",      // 'focus'（1文集中） | 'list'（一覧）
+      focusIndex: 0,
+      theme: "paper",            // 'paper' | 'sepia' | 'dark'
+      showSlashes: true,
+      speechRate: 0.95,
+      masteredIds: new Set(),
+      revealedChunks: {},        // key: "u9-1-0" => boolean
+      openPanels: {},            // key: "u9-1" => null | 'vocab' | 'draft' | 'answer'
+      revealedBlanks: {},        // key: "ws-u9-1-0" => boolean
+      userDrafts: {},            // key: "u9-1" => string
+      quizType: "vocab",         // 'vocab' | 'chunk'
+      quizPool: [],
+      currentQuiz: null,
+      quizAnswered: false,
+      quizCorrect: 0,
+      quizTotal: 0
+    };
+
+    /* =========================================================================
+       保存データの読み込み・保存
+    ========================================================================= */
+    function loadSavedSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_MASTERED);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) state.masteredIds = new Set(parsed);
+        }
+        const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+        if (savedTheme && ["paper", "sepia", "dark"].includes(savedTheme)) {
+          state.theme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Storage unavailable:", err);
+      }
+      applyTheme();
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY_MASTERED, JSON.stringify([...state.masteredIds]));
+      } catch (err) {
+        console.warn("Storage save skipped:", err);
+      }
+    }
+
+    /* =========================================================================
+       テーマ・音声・ユーティリティ
+    ========================================================================= */
+    function setTheme(themeName) {
+      state.theme = themeName;
+      applyTheme();
+      try {
+        localStorage.setItem(STORAGE_KEY_THEME, themeName);
+      } catch (err) {
+        console.warn("Theme save skipped:", err);
+      }
+    }
+
+    function applyTheme() {
+      document.documentElement.setAttribute("data-theme", state.theme);
+      ["paper", "sepia", "dark"].forEach((t) => {
+        const btn = document.getElementById(`theme-${t}`);
+        if (!btn) return;
+        if (state.theme === t) {
+          btn.style.backgroundColor = "var(--bg-surface)";
+          btn.style.color = "var(--text-main)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
+    }
+
+    let toastTimer = null;
+    function showToast(message) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.classList.remove("opacity-0");
+      el.classList.add("opacity-100");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        el.classList.add("opacity-0");
+        el.classList.remove("opacity-100");
+      }, 1800);
+    }
+
+    function speakText(text) {
+      try {
+        if (!("speechSynthesis" in window)) {
+          showToast("このブラウザは音声読み上げに非対応です");
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-US";
+        utter.rate = state.speechRate;
+        window.speechSynthesis.speak(utter);
+      } catch (err) {
+        showToast("音声を再生できませんでした");
+      }
+    }
+
+    function cycleSpeechRate() {
+      const rates = [0.75, 0.95, 1.15];
+      const nextIdx = (rates.indexOf(state.speechRate) + 1) % rates.length;
+      state.speechRate = rates[nextIdx];
+      document.getElementById("btn-rate-cycle").textContent = `速度 ${state.speechRate}x`;
+    }
+
+    function stripClozeMarkers(clozeStr) {
+      return clozeStr.replace(/\{\{(.*?)\}\}/g, "$1");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeJsSingle(str) {
+      return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    /* =========================================================================
+       ユニット・モード・レイアウト切替
+    ========================================================================= */
+    function switchUnit(unitKey) {
+      state.currentUnit = unitKey;
+      state.focusIndex = 0;
+      updateHeaderUI();
+      renderCurrentView();
+      if (state.currentMode === "quiz") resetQuizPoolAndNext();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function switchMode(mode) {
+      state.currentMode = mode;
+      updateHeaderUI();
+      renderCurrentView();
+      if (mode === "quiz") resetQuizPoolAndNext();
+    }
+
+    function setSlashLayout(layout) {
+      state.slashLayout = layout;
+      renderSlashMode();
+    }
+
+    function onFilterUnmasteredChange() {
+      state.focusIndex = 0;
+      renderSlashMode();
+    }
+
+    function updateHeaderUI() {
+      const unit = UNITS_DATA[state.currentUnit];
+
+      // ユニットタブ（落ち着いた控えめな選択表示）
+      ["unit7", "unit9", "unit12"].forEach((key) => {
+        const idMap = { unit7: "btn-unit-7", unit9: "btn-unit-9", unit12: "btn-unit-12" };
+        const btn = document.getElementById(idMap[key]);
+        if (!btn) return;
+        if (state.currentUnit === key) {
+          btn.style.backgroundColor = "var(--accent-soft)";
+          btn.style.color = "var(--accent)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
+
+      // モードタブ（下線のみでシンプルに）
+      ["slash", "quiz", "worksheet"].forEach((t) => {
+        const el = document.getElementById(`tab-${t}`);
+        if (!el) return;
+        if (state.currentMode === t) {
+          el.style.borderColor = "var(--accent)";
+          el.style.color = "var(--text-main)";
+          el.style.fontWeight = "700";
+        } else {
+          el.style.borderColor = "transparent";
+          el.style.color = "var(--text-muted)";
+          el.style.fontWeight = "500";
+        }
+      });
+
+      document.getElementById("unit-badge").textContent = `${unit.badge}（全${unit.sentences.length}文）`;
+      document.getElementById("unit-title-en").textContent = unit.titleEn;
+      document.getElementById("unit-title-ja").textContent = unit.titleJa;
+
+      updateProgressUI();
+    }
+
+    function updateProgressUI() {
+      const unit = UNITS_DATA[state.currentUnit];
+      const total = unit.sentences.length;
+      const done = unit.sentences.filter((s) => state.masteredIds.has(s.id)).length;
+      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+      document.getElementById("top-progress-line").style.width = `${pct}%`;
+      document.getElementById("progress-text").textContent = `習得 ${done} / ${total}`;
+    }
+
+    function renderCurrentView() {
+      document.getElementById("view-slash").classList.toggle("hidden", state.currentMode !== "slash");
+      document.getElementById("view-quiz").classList.toggle("hidden", state.currentMode !== "quiz");
+      document.getElementById("view-worksheet").classList.toggle("hidden", state.currentMode !== "worksheet");
+
+      if (state.currentMode === "slash") renderSlashMode();
+      if (state.currentMode === "worksheet") renderWorksheetMode();
+    }
+
+    /* =========================================================================
+       モード1：スラッシュ読解（1文集中 & 一覧）
+    ========================================================================= */
+    function getFilteredSentences() {
+      const unit = UNITS_DATA[state.currentUnit];
+      const onlyUnmastered = document.getElementById("filter-unmastered").checked;
+      return unit.sentences.filter((s) => !onlyUnmastered || !state.masteredIds.has(s.id));
+    }
+
+    function stepFocusSentence(delta) {
+      const list = getFilteredSentences();
+      if (list.length === 0) return;
+      const next = state.focusIndex + delta;
+      if (next >= 0 && next < list.length) {
+        state.focusIndex = next;
+        renderSlashMode();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function jumpToFocusIndex(index) {
+      const list = getFilteredSentences();
+      if (index >= 0 && index < list.length) {
+        state.focusIndex = index;
+        renderSlashMode();
+      }
+    }
+
+    function toggleSlashes() {
+      state.showSlashes = !state.showSlashes;
+      const btn = document.getElementById("btn-toggle-slashes");
+      btn.textContent = state.showSlashes ? "/ 区切り: ON" : "/ 区切り: OFF";
+      btn.style.color = state.showSlashes ? "var(--accent)" : "var(--text-muted)";
+      renderSlashMode();
+    }
+
+    function setAllChunksVisibility(show) {
+      const list = getFilteredSentences();
+      const targets = state.slashLayout === "focus" && list[state.focusIndex]
+        ? [list[state.focusIndex]]
+        : list;
+
+      targets.forEach((sent) => {
+        sent.chunks.forEach((_, idx) => {
+          state.revealedChunks[`${sent.id}-${idx}`] = show;
+        });
+      });
+      renderSlashMode();
+    }
+
+    function toggleChunk(sentId, chunkIdx) {
+      const key = `${sentId}-${chunkIdx}`;
+      state.revealedChunks[key] = !state.revealedChunks[key];
+
+      const jaEl = document.getElementById(`chunk-ja-${key}`);
+      const boxEl = document.getElementById(`chunk-box-${key}`);
+      if (jaEl && boxEl) {
+        const revealed = state.revealedChunks[key];
+        jaEl.className = `mt-2 text-xs sm:text-sm font-medium leading-snug ${revealed ? "chunk-visible" : "chunk-hidden"}`;
+        boxEl.style.borderColor = revealed ? "var(--accent-border)" : "var(--border-soft)";
+        boxEl.style.backgroundColor = revealed ? "var(--accent-soft)" : "var(--bg-surface)";
+      }
+    }
+
+    function toggleSentenceChunks(sentId, show) {
+      const unit = UNITS_DATA[state.currentUnit];
+      const sent = unit.sentences.find((s) => s.id === sentId);
+      if (!sent) return;
+      sent.chunks.forEach((_, idx) => {
+        const key = `${sentId}-${idx}`;
+        state.revealedChunks[key] = show;
+        const jaEl = document.getElementById(`chunk-ja-${key}`);
+        const boxEl = document.getElementById(`chunk-box-${key}`);
+        if (jaEl && boxEl) {
+          jaEl.className = `mt-2 text-xs sm:text-sm font-medium leading-snug ${show ? "chunk-visible" : "chunk-hidden"}`;
+          boxEl.style.borderColor = show ? "var(--accent-border)" : "var(--border-soft)";
+          boxEl.style.backgroundColor = show ? "var(--accent-soft)" : "var(--bg-surface)";
+        }
+      });
+    }
+
+    // 補助パネル（重要単語 / 和訳メモ / 模範和訳）を1つずつ静かに開閉
+    function togglePanel(sentId, panelName) {
+      state.openPanels[sentId] = state.openPanels[sentId] === panelName ? null : panelName;
+      renderSlashMode();
+    }
+
+    function toggleMastered(sentId) {
+      if (state.masteredIds.has(sentId)) {
+        state.masteredIds.delete(sentId);
+      } else {
+        state.masteredIds.add(sentId);
+      }
+      saveProgress();
+      updateProgressUI();
+      renderSlashMode();
+    }
+
+    function saveDraft(sentId, value) {
+      state.userDrafts[sentId] = value;
+    }
+
+    function flipVocabChip(chipEl, enText, jaText) {
+      const isFlipped = chipEl.dataset.flipped === "true";
+      const labelEl = chipEl.querySelector(".vocab-text");
+      if (isFlipped) {
+        chipEl.dataset.flipped = "false";
+        labelEl.textContent = enText;
+        chipEl.style.borderColor = "var(--border-soft)";
+        chipEl.style.backgroundColor = "var(--bg-surface)";
+        chipEl.style.color = "var(--text-main)";
+      } else {
+        chipEl.dataset.flipped = "true";
+        labelEl.textContent = jaText;
+        chipEl.style.borderColor = "var(--accent-border)";
+        chipEl.style.backgroundColor = "var(--accent-soft)";
+        chipEl.style.color = "var(--accent)";
+      }
+    }
+
+    function buildSentenceCardHtml(sent) {
+      const isMastered = state.masteredIds.has(sent.id);
+      const fullEn = sent.chunks.map((c) => c.en).join(" ");
+      const fullJp = stripClozeMarkers(sent.jpCloze);
+      const activePanel = state.openPanels[sent.id] || null;
+      const draftVal = state.userDrafts[sent.id] || "";
+
+      // 1) オレンジスラッシュ付き英文（読みやすさ最優先の行間・文字サイズ）
+      const slashLineHtml = sent.chunks.map((chunk, i) => {
+        const isLast = i === sent.chunks.length - 1;
+        const slashSpan = state.showSlashes && !isLast
+          ? `<span class="text-accent font-semibold mx-1.5 select-none">/</span>`
+          : " ";
+        return `<span class="cursor-pointer hover:underline decoration-orange-400/70 underline-offset-4" onclick="toggleChunk('${sent.id}', ${i})" title="タップしてこのチャンクの訳を表示">${escapeHtml(chunk.en)}</span>${slashSpan}`;
+      }).join("");
+
+      // 2) チャンク分解ブロック
+      const chunkCardsHtml = sent.chunks.map((chunk, idx) => {
+        const key = `${sent.id}-${idx}`;
+        const revealed = !!state.revealedChunks[key];
+        return `
+          <button
+            type="button"
+            id="chunk-box-${key}"
+            onclick="toggleChunk('${sent.id}', ${idx})"
+            class="flex flex-col justify-between p-3 rounded-xl border text-left transition-colors"
+            style="border-color: ${revealed ? 'var(--accent-border)' : 'var(--border-soft)'}; background-color: ${revealed ? 'var(--accent-soft)' : 'var(--bg-surface)'};"
+          >
+            <div class="flex items-start justify-between gap-2 w-full">
+              <span class="text-sm sm:text-[15px] font-medium text-main leading-snug">${escapeHtml(chunk.en)}</span>
+              <span
+                onclick="event.stopPropagation(); speakText('${escapeJsSingle(chunk.en)}')"
+                title="この部分を聞く"
+                class="p-1 -m-1 text-faint hover:text-accent shrink-0 transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07"/>
+                </svg>
+              </span>
+            </div>
+            <div id="chunk-ja-${key}" class="mt-2 text-xs sm:text-sm font-medium leading-snug ${revealed ? 'chunk-visible' : 'chunk-hidden'}">
+              ${escapeHtml(chunk.ja)}
+            </div>
+          </button>
+        `;
+      }).join("");
+
+      // 3) 補助パネル内容（必要なときだけ開くので気が散らない）
+      let panelBodyHtml = "";
+      if (activePanel === "vocab") {
+        const vocabHtml = sent.vocab.map((v) => `
+          <button
+            type="button"
+            data-flipped="false"
+            onclick="flipVocabChip(this, '${escapeJsSingle(v.en)}', '${escapeJsSingle(v.ja)}')"
+            class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-xs sm:text-sm font-medium transition-colors select-none"
+            style="border-color: var(--border-soft); background-color: var(--bg-surface); color: var(--text-main);"
+          >
+            <span class="text-[10px] text-faint font-semibold">${escapeHtml(v.pos)}</span>
+            <span class="vocab-text">${escapeHtml(v.en)}</span>
+          </button>
+        `).join("");
+        panelBodyHtml = `
+          <div class="mt-4 pt-4 border-t border-soft">
+            <p class="text-[11px] text-faint mb-2.5">タップで日本語の意味を確認</p>
+            <div class="flex flex-wrap gap-2">${vocabHtml}</div>
+          </div>
+        `;
+      } else if (activePanel === "draft") {
+        panelBodyHtml = `
+          <div class="mt-4 pt-4 border-t border-soft">
+            <textarea
+              rows="3"
+              oninput="saveDraft('${sent.id}', this.value)"
+              placeholder="チャンクをつなげて、自分の言葉で日本語にしてみましょう..."
+              class="w-full rounded-xl border border-soft subtle-box px-3.5 py-2.5 text-sm text-main outline-none focus:border-orange-400 transition-colors"
+            >${escapeHtml(draftVal)}</textarea>
+          </div>
+        `;
+      } else if (activePanel === "answer") {
+        panelBodyHtml = `
+          <div class="mt-4 pt-4 border-t border-soft space-y-3">
+            <div>
+              <span class="text-[11px] font-semibold text-accent">模範和訳</span>
+              <p class="mt-1 text-sm sm:text-base font-medium text-main leading-relaxed">${escapeHtml(fullJp)}</p>
+            </div>
+            <div class="p-3.5 rounded-xl subtle-box border border-soft">
+              <span class="text-[11px] font-semibold text-muted">構文・ポイント</span>
+              <p class="mt-1 text-xs sm:text-sm text-muted leading-relaxed">${escapeHtml(sent.grammarNote)}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      const tabBtnStyle = (name) => activePanel === name
+        ? `background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); font-weight: 600;`
+        : `background-color: transparent; border-color: var(--border-soft); color: var(--text-muted); font-weight: 500;`;
+
+      return `
+        <article class="surface rounded-2xl border p-5 sm:p-7 space-y-6">
+          <!-- 文ヘッダー（最小限の操作のみ） -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs font-bold text-accent px-2 py-0.5 rounded-md" style="background-color: var(--accent-soft);">
+                ${escapeHtml(sent.label)}
+              </span>
+              <button
+                type="button"
+                onclick="speakText('${escapeJsSingle(fullEn)}')"
+                class="inline-flex items-center gap-1.5 text-xs font-medium text-muted hover:text-main transition-colors px-2 py-1 rounded-lg"
+                title="英文を読み上げる"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07"/>
+                </svg>
+                音声
+              </button>
+              <button
+                type="button"
+                onclick="toggleSentenceChunks('${sent.id}', true)"
+                class="text-xs font-medium text-faint hover:text-main transition-colors px-1.5 py-1"
+              >
+                全開
+              </button>
+              <button
+                type="button"
+                onclick="toggleSentenceChunks('${sent.id}', false)"
+                class="text-xs font-medium text-faint hover:text-main transition-colors px-1.5 py-1"
+              >
+                隠す
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onclick="toggleMastered('${sent.id}')"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors"
+              style="border-color: ${isMastered ? 'var(--done)' : 'var(--border-soft)'}; background-color: ${isMastered ? 'var(--done-soft)' : 'transparent'}; color: ${isMastered ? 'var(--done)' : 'var(--text-muted)'};"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+              </svg>
+              ${isMastered ? "習得済み" : "習得チェック"}
+            </button>
+          </div>
+
+          <!-- 英文本体（視覚的な主役） -->
+          <div class="text-lg sm:text-[21px] font-medium text-main leading-[1.95] tracking-[0.01em]">
+            ${slashLineHtml}
+          </div>
+
+          <!-- チャンク練習グリッド -->
+          <div class="pt-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${chunkCardsHtml}
+            </div>
+          </div>
+
+          <!-- 補助ツール（折りたたみタブでノイズを排除） -->
+          <div class="pt-3 border-t border-soft">
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onclick="togglePanel('${sent.id}', 'vocab')"
+                class="px-3 py-1.5 rounded-lg border text-xs transition-colors"
+                style="${tabBtnStyle('vocab')}"
+              >
+                重要単語 (${sent.vocab.length})
+              </button>
+              <button
+                type="button"
+                onclick="togglePanel('${sent.id}', 'draft')"
+                class="px-3 py-1.5 rounded-lg border text-xs transition-colors"
+                style="${tabBtnStyle('draft')}"
+              >
+                和訳メモ${draftVal.trim() ? "・記入あり" : ""}
+              </button>
+              <button
+                type="button"
+                onclick="togglePanel('${sent.id}', 'answer')"
+                class="px-3 py-1.5 rounded-lg border text-xs transition-colors"
+                style="${tabBtnStyle('answer')}"
+              >
+                模範和訳・解説
+              </button>
+            </div>
+            ${panelBodyHtml}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSlashMode() {
+      const container = document.getElementById("slash-cards-container");
+      const list = getFilteredSentences();
+
+      // レイアウトボタンの見た目更新
+      ["focus", "list"].forEach((mode) => {
+        const btn = document.getElementById(`layout-${mode}`);
+        if (state.slashLayout === mode) {
+          btn.style.backgroundColor = "var(--accent-soft)";
+          btn.style.color = "var(--accent)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
+
+      const slashBtn = document.getElementById("btn-toggle-slashes");
+      slashBtn.style.color = state.showSlashes ? "var(--accent)" : "var(--text-muted)";
+
+      const navTop = document.getElementById("focus-nav-top");
+      const navBottom = document.getElementById("focus-nav-bottom");
+
+      if (list.length === 0) {
+        navTop.classList.add("hidden");
+        navBottom.classList.add("hidden");
+        container.innerHTML = `
+          <div class="surface rounded-2xl border p-10 text-center space-y-2">
+            <p class="text-base font-bold text-main">このユニットの未習得の文はありません</p>
+            <p class="text-xs sm:text-sm text-muted">「未習得のみ」を外すか、演習モードで復習できます。</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (state.slashLayout === "focus") {
+        if (state.focusIndex >= list.length) state.focusIndex = list.length - 1;
+        if (state.focusIndex < 0) state.focusIndex = 0;
+
+        navTop.classList.remove("hidden");
+        navBottom.classList.remove("hidden");
+
+        // セレクトボックス更新
+        const selectEl = document.getElementById("focus-sentence-select");
+        selectEl.innerHTML = list.map((s, idx) =>
+          `<option value="${idx}" ${idx === state.focusIndex ? "selected" : ""}>${escapeHtml(s.label)} （${idx + 1} / ${list.length}）</option>`
+        ).join("");
+
+        const isFirst = state.focusIndex === 0;
+        const isLast = state.focusIndex === list.length - 1;
+        document.getElementById("btn-prev-top").disabled = isFirst;
+        document.getElementById("btn-prev-bottom").disabled = isFirst;
+        document.getElementById("btn-next-top").disabled = isLast;
+        document.getElementById("btn-next-bottom").disabled = isLast;
+
+        container.innerHTML = buildSentenceCardHtml(list[state.focusIndex]);
+      } else {
+        navTop.classList.add("hidden");
+        navBottom.classList.add("hidden");
+        container.innerHTML = list.map((sent) => buildSentenceCardHtml(sent)).join("");
+      }
+    }
+
+    /* =========================================================================
+       モード2：単語・チャンク演習（静かな4択）
+    ========================================================================= */
+    function setQuizType(type) {
+      state.quizType = type;
+      state.quizCorrect = 0;
+      state.quizTotal = 0;
+      resetQuizPoolAndNext();
+    }
+
+    function updateQuizTypeButtons() {
+      ["vocab", "chunk"].forEach((t) => {
+        const btn = document.getElementById(`quiz-type-${t}`);
+        if (state.quizType === t) {
+          btn.style.backgroundColor = "var(--bg-surface)";
+          btn.style.color = "var(--text-main)";
+          btn.style.fontWeight = "700";
+        } else {
+          btn.style.backgroundColor = "transparent";
+          btn.style.color = "var(--text-muted)";
+          btn.style.fontWeight = "500";
+        }
+      });
+      document.getElementById("quiz-score").textContent = `正答 ${state.quizCorrect} / ${state.quizTotal}`;
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildQuizPool() {
+      const unit = UNITS_DATA[state.currentUnit];
+      const items = [];
+      unit.sentences.forEach((sent) => {
+        const fullEn = sent.chunks.map((c) => c.en).join(" ");
+        if (state.quizType === "vocab") {
+          sent.vocab.forEach((v) => {
+            items.push({
+              en: v.en,
+              ja: v.ja,
+              tag: `${unit.badge} / 文 ${sent.label}（${v.pos}）`,
+              context: fullEn,
+              fullJp: stripClozeMarkers(sent.jpCloze)
+            });
+          });
+        } else {
+          sent.chunks.forEach((c) => {
+            items.push({
+              en: c.en,
+              ja: c.ja,
+              tag: `${unit.badge} / 文 ${sent.label}`,
+              context: fullEn,
+              fullJp: stripClozeMarkers(sent.jpCloze)
+            });
+          });
+        }
+      });
+      return items;
+    }
+
+    function resetQuizPoolAndNext() {
+      updateQuizTypeButtons();
+      state.quizPool = shuffleArray(buildQuizPool());
+      nextQuizQuestion();
+    }
+
+    function nextQuizQuestion() {
+      const allItems = buildQuizPool();
+      if (state.quizPool.length === 0) {
+        state.quizPool = shuffleArray(allItems);
+      }
+
+      const target = state.quizPool.pop();
+      const distractors = shuffleArray(
+        allItems.filter((item) => item.ja !== target.ja && item.en !== target.en)
+      ).slice(0, 3);
+
+      const options = shuffleArray([target, ...distractors]);
+      state.currentQuiz = { target, options };
+      state.quizAnswered = false;
+
+      document.getElementById("quiz-source-tag").textContent = target.tag;
+      document.getElementById("quiz-question").textContent = target.en;
+      document.getElementById("quiz-context").textContent = target.context;
+      document.getElementById("quiz-feedback").classList.add("hidden");
+
+      const optionsContainer = document.getElementById("quiz-options");
+      optionsContainer.innerHTML = options.map((opt, idx) => `
+        <button
+          type="button"
+          id="quiz-opt-${idx}"
+          onclick="answerQuiz(${idx})"
+          class="p-4 rounded-xl border border-soft surface hover:border-orange-400/70 text-sm sm:text-base font-medium text-main transition-colors text-left leading-snug"
+        >
+          <span class="inline-block w-5 text-xs font-semibold text-faint mr-1">${idx + 1}.</span>
+          ${escapeHtml(opt.ja)}
+        </button>
+      `).join("");
+
+      updateQuizTypeButtons();
+    }
+
+    function answerQuiz(chosenIdx) {
+      if (state.quizAnswered || !state.currentQuiz) return;
+      state.quizAnswered = true;
+      state.quizTotal += 1;
+
+      const { target, options } = state.currentQuiz;
+      const isCorrect = options[chosenIdx].ja === target.ja;
+      if (isCorrect) state.quizCorrect += 1;
+
+      options.forEach((opt, idx) => {
+        const btn = document.getElementById(`quiz-opt-${idx}`);
+        btn.disabled = true;
+        if (opt.ja === target.ja) {
+          btn.style.borderColor = "var(--done)";
+          btn.style.backgroundColor = "var(--done-soft)";
+          btn.style.color = "var(--done)";
+          btn.style.fontWeight = "700";
+        } else if (idx === chosenIdx) {
+          btn.style.borderColor = "var(--wrong)";
+          btn.style.backgroundColor = "var(--wrong-soft)";
+          btn.style.color = "var(--wrong)";
+        } else {
+          btn.style.opacity = "0.45";
+        }
+      });
+
+      const fb = document.getElementById("quiz-feedback");
+      const fbTitle = document.getElementById("quiz-feedback-title");
+      const fbDetail = document.getElementById("quiz-feedback-detail");
+
+      fb.classList.remove("hidden");
+      fb.style.borderColor = isCorrect ? "var(--done)" : "var(--wrong)";
+      fb.style.backgroundColor = isCorrect ? "var(--done-soft)" : "var(--wrong-soft)";
+      fbTitle.style.color = isCorrect ? "var(--done)" : "var(--wrong)";
+      fbTitle.textContent = isCorrect ? "正解" : `不正解 — 正答：${target.ja}`;
+      fbDetail.textContent = target.fullJp;
+      updateQuizTypeButtons();
+    }
+
+    function speakCurrentQuiz() {
+      if (state.currentQuiz) speakText(state.currentQuiz.target.en);
+    }
+
+    /* =========================================================================
+       モード3：プリント穴埋めモード
+    ========================================================================= */
+    function toggleWorksheetBlank(blankKey) {
+      state.revealedBlanks[blankKey] = !state.revealedBlanks[blankKey];
+      const el = document.getElementById(`blank-${blankKey}`);
+      if (el) {
+        const open = state.revealedBlanks[blankKey];
+        el.textContent = open ? el.dataset.answer : "　　　";
+        el.className = `cloze-slot ${open ? "cloze-slot-open" : "cloze-slot-closed"}`;
+      }
+    }
+
+    function toggleAllWorksheetBlanks(show) {
+      const unit = UNITS_DATA[state.currentUnit];
+      unit.sentences.forEach((sent) => {
+        let count = 0;
+        sent.jpCloze.replace(/\{\{(.*?)\}\}/g, () => {
+          state.revealedBlanks[`ws-${sent.id}-${count}`] = show;
+          count++;
+        });
+      });
+      renderWorksheetMode();
+    }
+
+    function renderWorksheetMode() {
+      const container = document.getElementById("worksheet-container");
+      const unit = UNITS_DATA[state.currentUnit];
+
+      container.innerHTML = unit.sentences.map((sent) => {
+        const fullEn = sent.chunks.map((c) => c.en).join(" ");
+        const slashEn = sent.chunks
+          .map((c) => escapeHtml(c.en))
+          .join(`<span class="text-accent font-semibold mx-1.5">/</span>`);
+
+        let blankIdx = 0;
+        const clozeHtml = escapeHtml(sent.jpCloze).replace(/\{\{(.*?)\}\}/g, (_, word) => {
+          const key = `ws-${sent.id}-${blankIdx++}`;
+          const open = !!state.revealedBlanks[key];
+          return `<button
+            type="button"
+            id="blank-${key}"
+            data-answer="${word}"
+            onclick="toggleWorksheetBlank('${key}')"
+            class="cloze-slot ${open ? 'cloze-slot-open' : 'cloze-slot-closed'}"
+          >${open ? word : '　　　'}</button>`;
+        });
+
+        return `
+          <div class="surface rounded-2xl border p-5 sm:p-6 space-y-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3">
+                <span class="text-xs font-bold text-accent mt-1 shrink-0">${escapeHtml(sent.label)}</span>
+                <p class="text-sm sm:text-base font-medium text-main leading-relaxed">${slashEn}</p>
+              </div>
+              <button
+                type="button"
+                onclick="speakText('${escapeJsSingle(fullEn)}')"
+                class="p-1.5 text-faint hover:text-main transition-colors shrink-0"
+                title="英文を読み上げる"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="pt-3 border-t border-soft text-sm sm:text-[15px] text-main leading-[2.2]">
+              ${clozeHtml}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    /* =========================================================================
+       キーボード操作＆タッチスワイプ（集中モードでの快適な移動）
+    ========================================================================= */
+    function initNavigationShortcuts() {
+      document.addEventListener("keydown", (e) => {
+        const tag = document.activeElement?.tagName;
+        if (tag === "TEXTAREA" || tag === "INPUT" || tag === "SELECT") return;
+
+        if (state.currentMode === "slash" && state.slashLayout === "focus") {
+          if (e.key === "ArrowLeft") stepFocusSentence(-1);
+          if (e.key === "ArrowRight") stepFocusSentence(1);
+        } else if (state.currentMode === "quiz") {
+          if (["1", "2", "3", "4"].includes(e.key) && !state.quizAnswered) {
+            answerQuiz(Number(e.key) - 1);
+          } else if (e.key === "Enter" && state.quizAnswered) {
+            nextQuizQuestion();
+          }
+        }
+      });
+
+      // スワイプ移動（タッチデバイス対応）
+      const cardArea = document.getElementById("slash-cards-container");
+      let startX = 0;
+      let startY = 0;
+      cardArea.addEventListener("touchstart", (e) => {
+        if (e.touches.length !== 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+
+      cardArea.addEventListener("touchend", (e) => {
+        if (state.currentMode !== "slash" || state.slashLayout !== "focus") return;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          stepFocusSentence(dx < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+    }
+
+    /* =========================================================================
+       アプリ起動
+    ========================================================================= */
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedSettings();
+      initNavigationShortcuts();
+      updateHeaderUI();
+      renderCurrentView();
+    });
+  </script>
+</body>
+</html>
