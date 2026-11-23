@@ -3191,8 +3191,6 @@
       } else {
         state.cardKnownIds.delete(id);
         state.cardWrongIds.add(id);
-        const pos = Math.min(3, state.cardQueue.length);
-        state.cardQueue.splice(pos, 0, id);
       }
       saveCardProgress();
       state.cardFlipped = false;
@@ -3254,6 +3252,7 @@
       const back = state.cardDirection === "en2ja" ? ja : en;
       const pos = Math.min(state.cardRoundTotal - state.cardQueue.length + 1, state.cardRoundTotal);
       const isWrong = state.cardWrongIds.has(id);
+      const wrongCount = cards.filter((_, i) => state.cardWrongIds.has(`fc-${state.currentUnit}-${i}`)).length;
       const speakerSvg = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/></svg>`;
       const speakerBtn = (extraCls) => `<button
         type="button"
@@ -3316,6 +3315,18 @@
           </button>
         </div>
         <p class="sm:hidden text-center text-[11px] text-faint">カードをタップでめくる・左右スワイプでも回答できます</p>
+        ${wrongCount > 0 && state.cardFilter !== "wrong" ? `
+        <div class="text-center">
+          <button
+            type="button"
+            onclick="cardReviewWrong()"
+            class="px-4 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-colors"
+            style="background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong); min-height: 40px;"
+          >
+            苦手 ${wrongCount} 枚を復習
+          </button>
+        </div>
+        ` : ""}
       `;
     }
 
