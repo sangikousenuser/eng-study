@@ -253,6 +253,9 @@
           <button type="button" id="tab-card" onclick="switchMode('card')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
             暗記カード
           </button>
+          <button type="button" id="tab-practice" onclick="switchMode('practice')" class="pb-1 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition-colors">
+            問題
+          </button>
         </nav>
       </div>
     </div>
@@ -524,6 +527,36 @@
 
       <div id="flashcard-area" class="space-y-4"></div>
     </section>
+
+    <!-- =========================================================
+         モード5：問題（演習プリント集）
+    ========================================================== -->
+    <section id="view-practice" class="hidden space-y-5">
+      <!-- 出典選択チップ -->
+      <div id="practice-sources" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs"></div>
+      <!-- セット選択チップ -->
+      <div id="practice-sets" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span id="practice-instruction" class="text-muted"></span>
+        <div class="flex items-center gap-2">
+          <label class="flex items-center gap-1.5 text-muted cursor-pointer select-none">
+            <input id="practice-filter-marked" type="checkbox" onchange="onPracticeFilterChange()" class="w-3.5 h-3.5 rounded accent-orange-600" />
+            苦手のみ
+          </label>
+          <button
+            type="button"
+            onclick="resetPracticeSet()"
+            class="px-3 py-1.5 rounded-lg border border-soft surface text-muted hover:text-main font-medium transition-colors"
+            style="min-height: 36px;"
+          >
+            やり直す
+          </button>
+        </div>
+      </div>
+
+      <div id="practice-body" class="space-y-4"></div>
+    </section>
   </main>
 
   <!-- モバイル用ボトムタブバー -->
@@ -532,7 +565,7 @@
     style="background-color: var(--bg-surface); padding-bottom: env(safe-area-inset-bottom);"
     aria-label="学習モード（モバイル）"
   >
-    <div class="grid grid-cols-4">
+    <div class="grid grid-cols-5">
       <button type="button" id="mtab-slash" onclick="switchMode('slash')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
@@ -556,6 +589,12 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
         </svg>
         <span>カード</span>
+      </button>
+      <button type="button" id="mtab-practice" onclick="switchMode('practice')" class="flex flex-col items-center justify-center gap-0.5 h-14 text-[10px] font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        <span>問題</span>
       </button>
     </div>
   </nav>
@@ -1701,6 +1740,326 @@
       ]
     };
 
+    const PRACTICE_DATA = {
+      unit7: {
+        label: "Unit 7 クジラ",
+        sets: [
+          {
+            id: "u7-br2",
+            title: "Before reading 2",
+            instruction: "日本語に対応する英語表現を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "波及効果", options: ["ripple effect", "reverse effect"], answer: 0 },
+              { q: "助教授", options: ["adjunct professor", "assistant professor"], answer: 1 },
+              { q: "（鯨の）尾", options: ["flakes", "flukes"], answer: 1 },
+              { q: "生理機能", options: ["philology", "physiology"], answer: 1 },
+              { q: "哺乳類", options: ["mammal", "maximal"], answer: 0 }
+            ]
+          },
+          {
+            id: "u7-wr2",
+            title: "While reading 2",
+            instruction: "記事の中で次の情報が述べられている段落の番号を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "北太平洋東部に生息している鯨の数", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬"], answer: 2, exp: "③ the wider Eastern North Pacific (ENP) population of around 14,500" },
+              { q: "論文が掲載された学術誌の名前", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬"], answer: 4, exp: "⑤ co-author of the paper in Global Change Biology" },
+              { q: "ドローンで撮影したコククジラの頭数", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬"], answer: 5, exp: "⑥ drone images taken from 2016-2022 of 130 individuals" },
+              { q: "Enrico Pirotta 氏の所属", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬"], answer: 9, exp: "⑩ a researcher at the University of St. Andrews in Scotland" }
+            ]
+          },
+          {
+            id: "u7-wr3",
+            title: "While reading 3",
+            instruction: "空欄に入る単語または数字を考えてから、タップして答えを確認しましょう。",
+            type: "blanks",
+            text: "According to prior research, Pacific coast gray whales are in worse shape than the wider [[1]] that inhabits colder, deeper Arctic seas, with smaller bodies, heads and flukes. Now a recent study published in Global Change [[2]] revealed that Pacific coast gray whales have shrunk in length an astonishing [[3]] percent since 2000, adding to evidence that climate change and other human activities are making [[4]] mammals smaller. Their diminished size could have big impacts on survival rates and reproductive success and trigger ripple effects throughout their [[5]] food webs.",
+            blanks: [
+              { n: 1, hint: "p", answer: "population" },
+              { n: 2, hint: "B", answer: "Biology" },
+              { n: 3, hint: "", answer: "13" },
+              { n: 4, hint: "m", answer: "marine" },
+              { n: 5, hint: "e", answer: "entire" }
+            ]
+          },
+          {
+            id: "u7-wr5",
+            title: "While reading 5",
+            instruction: "記事の内容と合致すれば T、しなければ F を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "Previous research showed that the wider Eastern North Pacific population have larger bodies than the Pacific Coast Feeding Group.", options: ["T", "F"], answer: 0, exp: "④ Prior research had shown they are in worse shape than their counterparts, with smaller bodies…" },
+              { q: "According to Kevin Bierlich, the population of Pacific coast gray whales may become smaller in the future.", options: ["T", "F"], answer: 0, exp: "⑤ …an early warning sign that the population is at risk of declining" },
+              { q: "The ages of all the individuals under analysis were specified.", options: ["T", "F"], answer: 1, exp: "⑥ 130 individuals whose age was estimated or known（推定の個体も含む）" },
+              { q: "In the past, females of the mature gray whale were larger than males of the species.", options: ["T", "F"], answer: 0, exp: "⑧ females, who historically exceeded males in size" }
+            ]
+          },
+          {
+            id: "u7-ar1",
+            title: "After reading 1",
+            instruction: "語句を並べ替えて英文を完成させましょう。",
+            type: "order",
+            items: [
+              { ja: "太平洋沿岸のコククジラはより広範囲に生息する群れより岸に近い場所にいる。", prefix: "Pacific coast gray whales", suffix: ".", tokens: ["to", "stay", "than", "shore", "closer", "the wider population"], answer: ["stay", "closer", "to", "shore", "than", "the wider population"] },
+              { ja: "彼らの小型化は繁殖の成功に大きく影響する可能性がある。", prefix: "", suffix: ".", tokens: ["on", "have", "could", "impacts", "reproductive success", "their diminished size"], answer: ["their diminished size", "could", "have", "impacts", "on", "reproductive success"] },
+              { ja: "太平洋沿岸のコククジラは過去20〜40年の間に体長が小さくなり続けている。", prefix: "Pacific coast gray whales", suffix: "the past 20-40 years.", tokens: ["in", "been", "have", "over", "shrinking", "body size"], answer: ["have", "been", "shrinking", "in", "body size", "over"] },
+              { ja: "太平洋沿岸のコククジラの頭数は減少の危機にある。", prefix: "The population of", suffix: ".", tokens: ["at", "is", "of", "declining", "risk", "Pacific coast gray whales"], answer: ["Pacific coast gray whales", "is", "at", "risk", "of", "declining"] }
+            ]
+          },
+          {
+            id: "u7-ar2",
+            title: "After reading 2",
+            instruction: "説明に当てはまる語を本文から考え、タップして答えを確認しましょう。",
+            type: "flip",
+            items: [
+              { q: "a very large animal that lives in the sea and looks like a very large fish", hint: "w", answer: "whale" },
+              { q: "a type of animal that drinks milk from its mother's body when it is young", hint: "m", answer: "mammal" },
+              { q: "to make something happen very quickly, especially a series of events", hint: "t", answer: "trigger" },
+              { q: "an aircraft that does not have a pilot, but is operated by radio", hint: "d", answer: "drone" },
+              { q: "the way the body of a person or an animal works", hint: "p", answer: "physiology" },
+              { q: "to gradually stop feeding a baby or young animal on its mother's milk and start giving it ordinary food", hint: "w", answer: "wean" }
+            ]
+          }
+        ]
+      },
+      unit9: {
+        label: "Unit 9 自動運転",
+        sets: [
+          {
+            id: "u9-br2",
+            title: "Before reading 2",
+            instruction: "日本語に対応する英語表現を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "無料で", options: ["free of charge", "free of fee"], answer: 0 },
+              { q: "危険予測システム", options: ["danger prediction system", "danger previewing system"], answer: 0 },
+              { q: "人工知能", options: ["artistic intelligence", "artificial intelligence"], answer: 1 },
+              { q: "タクシー配車サービス", options: ["ride-hailing service", "ride-hairing service"], answer: 0 },
+              { q: "頭字語", options: ["acronym", "antonym"], answer: 0 }
+            ]
+          },
+          {
+            id: "u9-wr2",
+            title: "While reading 2",
+            instruction: "記事の中で次の情報が述べられている段落の番号を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "トヨタが2024年夏に開始を予定している自動運転サービスの運行範囲", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 1, exp: "② within an area of 1.5 square kilometers around the new arena" },
+              { q: "トヨタとソフトバンクが共同で出資した会社の名前", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 2, exp: "③ Monet Technologies Inc., a company jointly funded by Toyota and SoftBank Corp." },
+              { q: "トヨタの自動運転サービスに使われる予定の車種", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 3, exp: "④ based on the Toyota minivan Sienna" },
+              { q: "CASE という頭字語の説明", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 6, exp: "⑦ CASE, an acronym for connected, autonomous, shared and electric" }
+            ]
+          },
+          {
+            id: "u9-wr3",
+            title: "While reading 3",
+            instruction: "空欄に入る単語または数字を考えてから、タップして答えを確認しましょう。",
+            type: "blanks",
+            text: "Toyota Motor Corp. will begin a self-driving [[1]] service in Odaiba, Tokyo in the summer of 2024 using the technology of Level 4 autonomous driving with the aim of starting a driverless robotaxi business in the future. The service will operate free of charge within an area of [[2]] square kilometers around the new arena that Toyota and other [[3]] are currently constructing in Odaiba. From 2025 the company plans to switch to a paid service and expand its range to other [[4]] of central Tokyo. It is likely to be Japan's first automated driving service on public roads with other [[5]].",
+            blanks: [
+              { n: 1, hint: "t", answer: "transportation" },
+              { n: 2, hint: "", answer: "1.5" },
+              { n: 3, hint: "e", answer: "entities" },
+              { n: 4, hint: "d", answer: "districts" },
+              { n: 5, hint: "v", answer: "vehicles" }
+            ]
+          },
+          {
+            id: "u9-wr5",
+            title: "While reading 5",
+            instruction: "記事の内容と合致すれば T、しなければ F を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "People will be able to use the service for free in the next two years.", options: ["T", "F"], answer: 1, exp: "② From 2025 the company plans to switch to a paid service（2024年夏開始で、2025年から有料化予定）" },
+              { q: "Toyota has discussed the service with some organizations for more than one year.", options: ["T", "F"], answer: 1, exp: "③ Since the autumn of 2023（記事は2024年2月。協議は1年未満）" },
+              { q: "When people use the service, a human driver will be in the car for some time.", options: ["T", "F"], answer: 0, exp: "④ the company plans to have a driver ride along temporarily" },
+              { q: "Passengers who use the service can ride the car from anywhere.", options: ["T", "F"], answer: 1, exp: "⑤ Passengers can only get in and out of the car at limited places" }
+            ]
+          },
+          {
+            id: "u9-ar1",
+            title: "After reading 1",
+            instruction: "語句を並べ替えて英文を完成させましょう。",
+            type: "order",
+            items: [
+              { ja: "トヨタは自動運転技術への社会の理解を深めることを期待している。", prefix: "Toyota", suffix: ".", tokens: ["of", "to", "hopes", "deepen", "society's understanding", "its autonomous driving technology"], answer: ["hopes", "to", "deepen", "society's understanding", "of", "its autonomous driving technology"] },
+              { ja: "トヨタは2025年からサービスの範囲を都心の他地域に拡大する計画だ。", prefix: "Toyota", suffix: "of central Tokyo.", tokens: ["to", "to", "plans", "expand", "other districts", "its service range"], answer: ["plans", "to", "expand", "its service range", "to", "other districts"] },
+              { ja: "そのサービスに使われる車はセンサーを活用した危険予測システムを搭載する予定だ。", prefix: "The vehicle used for the service", suffix: "sensors.", tokens: ["be", "will", "with", "using", "equipped", "a danger prediction system"], answer: ["will", "be", "equipped", "with", "a danger prediction system", "using"] },
+              { ja: "そのサービスは無料で提供される予定だ。", prefix: "The service", suffix: ".", tokens: ["be", "of", "free", "will", "charge", "provided"], answer: ["will", "be", "provided", "free", "of", "charge"] }
+            ]
+          },
+          {
+            id: "u9-ar2",
+            title: "After reading 2",
+            instruction: "説明に当てはまる語を本文から考え、タップして答えを確認しましょう。",
+            type: "flip",
+            items: [
+              { q: "a system or method for carrying passengers or goods from one place to another", hint: "t", answer: "transportation" },
+              { q: "a place with a flat open area in the middle and seats around it where people can watch sports and entertainment", hint: "a", answer: "arena" },
+              { q: "a new small company or business, especially one whose work involves computers or the Internet", hint: "s", answer: "startup" },
+              { q: "a large car with seats for six to eight people", hint: "m", answer: "minivan" },
+              { q: "a car and driver that you pay to take you somewhere", hint: "t", answer: "taxi" },
+              { q: "a word made up from the first letters of the name of something such as an organization", hint: "a", answer: "acronym" }
+            ]
+          }
+        ]
+      },
+      unit12: {
+        label: "Unit 12 日米AI",
+        sets: [
+          {
+            id: "u12-br2",
+            title: "Before reading 2",
+            instruction: "日本語に対応する英語表現を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "補正予算", options: ["extraordinary budget", "supplementary budget"], answer: 1 },
+              { q: "創薬", options: ["drug detection", "drug discovery"], answer: 1 },
+              { q: "同盟国", options: ["allied countries", "hostile countries"], answer: 0 },
+              { q: "政府系研究機関", options: ["government-affiliated research institute", "government-supporting research institute"], answer: 0 },
+              { q: "産業競争力", options: ["industrial comparison", "industrial competitiveness"], answer: 1 }
+            ]
+          },
+          {
+            id: "u12-wr2",
+            title: "While reading 2",
+            instruction: "記事の中で次の情報が述べられている段落の番号を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "理研を所管している省", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 1, exp: "② RIKEN, which is under the jurisdiction of the Education, Culture, Sports, Science and Technology Ministry" },
+              { q: "アルゴンヌ国立研究所が所有するスーパーコンピューターの名前", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 2, exp: "③ Fugaku at RIKEN and Aurora at Argonne" },
+              { q: "文部科学省が2023年度の補正予算で開発費として計上した金額", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 3, exp: "④ about ¥12 billion for development in the fiscal 2023 supplementary budget" },
+              { q: "従来の方法と比較した場合の研究向けAIの調査範囲", options: ["①", "②", "③", "④", "⑤", "⑥", "⑦"], answer: 5, exp: "⑥ expand the range of research by 1,000 times wider than through conventional methods" }
+            ]
+          },
+          {
+            id: "u12-wr3",
+            title: "While reading 3",
+            instruction: "空欄に入る単語または数字を考えてから、タップして答えを確認しましょう。",
+            type: "blanks",
+            text: "AI allows for the [[1]] of large amounts of data in a short period of time. If AI for scientific research is developed, it may be possible to [[2]] the amount of time for drug research from about two years to about two months, and to expand the range of research by [[3]] times wider than through conventional methods. Thus, the Japanese and U.S. governments will collaborate on the development of artificial intelligence (AI) [[4]] for scientific research. The joint efforts will include data sharing for training AI and the joint use of [[5]] for AI development.",
+            blanks: [
+              { n: 1, hint: "a", answer: "analysis" },
+              { n: 2, hint: "r", answer: "reduce" },
+              { n: 3, hint: "", answer: "1,000" },
+              { n: 4, hint: "s", answer: "specialized" },
+              { n: 5, hint: "s", answer: "supercomputers" }
+            ]
+          },
+          {
+            id: "u12-wr5",
+            title: "While reading 5",
+            instruction: "記事の内容と合致すれば T、しなければ F を選びましょう。",
+            type: "choice",
+            items: [
+              { q: "Competition among countries to make scientific discoveries will likely get stronger.", options: ["T", "F"], answer: 0, exp: "① the anticipated intensified competition, accelerated by AI, for scientific discoveries among countries" },
+              { q: "As a large amount of computation is required for AI development, RIKEN and Argonne will use Fugaku and Aurora.", options: ["T", "F"], answer: 0, exp: "③ As AI development requires a large amount of computation, both supercomputers will be utilized" },
+              { q: "Companies in Japan will not be allowed to use the developed AI.", options: ["T", "F"], answer: 1, exp: "④ plans to make the developed AI available to companies and universities" },
+              { q: "Argonne plans to use the developed AI in the medical science field.", options: ["T", "F"], answer: 0, exp: "⑤ Argonne will develop large-scale AI for scientific research in such fields as climate, cancer and space（がん研究＝医学分野）" }
+            ]
+          }
+        ]
+      },
+      toeic6: {
+        label: "TOEIC Unit 6",
+        sets: [
+          {
+            id: "t6-p5",
+            title: "Part 5 Incomplete Sentences",
+            instruction: "英文を完成させるのに最も適切な語句を選びましょう。",
+            type: "choice",
+            items: [
+              { no: 13, q: "The businessmen have been ______ at an all-you-can-eat restaurant for three hours.", options: ["(A) eat", "(B) eating", "(C) eaten", "(D) to eat"], answer: 1, exp: "have been + -ing（現在完了進行形）「3時間ずっと食べている」" },
+              { no: 14, q: "I ______ go to that place again because the food tasted bad and the service was terrible.", options: ["(A) will never", "(B) will ever", "(C) will not everyday", "(D) will often"], answer: 0, exp: "料理もサービスもひどかった → 「二度と行かない」will never" },
+              { no: 15, q: "Waiters and waitresses ______ expect a tip of 10 to 15 percent of the check.", options: ["(A) every day", "(B) yet", "(C) usually", "(D) weekly"], answer: 2, exp: "頻度副詞 usually は一般動詞の前に置く" },
+              { no: 16, q: "______ a table at that restaurant because it is usually crowded.", options: ["(A) Never reserve", "(B) Seldom reserve", "(C) Always reserve", "(D) Sometimes reserve"], answer: 2, exp: "いつも混んでいる → 「必ず予約しなさい」Always reserve" }
+            ]
+          },
+          {
+            id: "t6-p6",
+            title: "Part 6 Text Completion",
+            instruction: "ガイドブックを読んで、空所に入る最も適切な語句や文を選びましょう。",
+            type: "choice",
+            passages: [
+              { title: "Restaurant Guide", text: "Enjoy the fantastic views of Lake Great from our restaurant. We __(17)__ a variety of fresh seafood and wonderful-tasting steaks created by our excellent chef, as well as a great wine list. And desserts are a must! You will also enjoy the beautiful atmosphere and experienced service. You can enjoy looking at the open kitchen and seeing our meals being prepared. We have three private rooms with breathtaking views. Our outside concert arena __(18)__ top entertainment all through the year. __(19)__ Please call us at 555-1234 or make a reservation online.\nlakegreat@www.newwave.com" }
+            ],
+            items: [
+              { no: 17, q: "(17)", options: ["(A) always offered", "(B) have always been offered", "(C) were always offering", "(D) always offer"], answer: 3, exp: "店の紹介文で現在の習慣・事実 → 現在形 always offer（主語 We が提供する側なので能動態）" },
+              { no: 18, q: "(18)", options: ["(A) featuring", "(B) features", "(C) is featured", "(D) featured"], answer: 1, exp: "主語 Our outside concert arena（三人称単数）の現在形の動詞 features「〜を目玉にする」" },
+              { no: 19, q: "(19)", options: ["(A) For example, come see the circus every weekend.", "(B) For example, you can watch an exciting tennis match every weekend.", "(C) In particular, don't miss the penguin parade every morning and evening.", "(D) In particular, enjoy our special violin trio every weekend."], answer: 3, exp: "直前の concert arena の top entertainment の具体例 → バイオリン三重奏" }
+            ]
+          },
+          {
+            id: "t6-p7",
+            title: "Part 7 Reading Comprehension",
+            instruction: "英文を読んで、質問の解答として最も適切なものを選びましょう。",
+            type: "choice",
+            passages: [
+              { title: "Christy's Guide to Dining in the Manhattan Area（質問20〜21）", text: "Sicilian Caves\nItalian-style restaurant featuring a wood burning brick pizza oven, outdoor dining and live music. Specialty items include Mediterranean pizza, pasta and seafood, and for dessert raspberry ice cream.\n\nDaimon\nJapanese sushi house, grilled meat and very unique sushi bar. Talented chefs prepare steak, chicken and seafood.\n\nRoyal Palace\nServing authentic Chinese food seven days a week with lunch and dinner buffets. Take-out available.\n\nManhattan Sunrise\nThe place for breakfast and lunch. We offer eggs, pancakes & waffles, salads, sandwiches, and burgers in a variety of styles that will suit every taste. We also offer discount coupons online.\n\nSerenade Café\nDelicious organic vegetarian meals! Fresh, healthy salads, veggie burgers, tofu dishes, soups and specials. Menu changes with the seasons. Non-sugar desserts available." },
+              { title: "The Dolphin House Restaurant（質問22〜24）", text: "The Dolphin House Restaurant has been offering the best Southern European dishes, sandwiches and hamburgers for years. We serve great food at family prices.\n\nSALADS\nTuna Salad ........ $7.50 (With potato salad, egg & tomatoes)\nChef Salad ........ $6.90 (With ham, chicken, cheese & egg)\nLarge Greek Salad ........ $6.90 (With black olives, cheese & Greek dressing)\n\nSANDWICHES & HAMBURGERS\nCheeseburger ........ $4.00\nBig Hamburger ........ $5.50\nBacon, Lettuce and Tomato Sandwich ........ $5.50\nTuna Salad Sandwich ........ $5.50\nDolphin House Special ........ $7.90 (Big cheeseburger with French fries and coleslaw)\n\nSPAGHETTI\nSpaghetti with Meat Sauce & Mushrooms ........ $8.50\nSpaghetti with Tomato Sauce ........ $7.90\n\nDESSERTS\nFrench Cream Pie ........ $2.00\nItalian Cheesecake ........ $3.00\n\nDRINKS\nTea ........ $1.90\nCoffee ........ $1.90\nTea or coffee is free if you order anything except desserts." }
+            ],
+            items: [
+              { no: 20, q: "If you want to eat out at a reduced price, which restaurant should you visit?", options: ["(A) Daimon", "(B) Royal Palace", "(C) Manhattan Sunrise", "(D) Serenade Café"], answer: 2, exp: "Manhattan Sunrise: We also offer discount coupons online." },
+              { no: 21, q: "If you cannot eat meat or fish, which restaurant should you visit?", options: ["(A) Sicilian Caves", "(B) Daimon", "(C) Royal Palace", "(D) Serenade Café"], answer: 3, exp: "Serenade Café: Delicious organic vegetarian meals!" },
+              { no: 22, q: "What kind of restaurant is the Dolphin House Restaurant?", options: ["(A) An American formal restaurant", "(B) An American casual restaurant", "(C) A European formal restaurant", "(D) A European casual restaurant"], answer: 3, exp: "Southern European dishes … great food at family prices（手頃な価格＝カジュアル）" },
+              { no: 23, q: "How much will it cost if you order a Big Hamburger and a tea?", options: ["(A) 4 dollars", "(B) 5 dollars 50 cents", "(C) 7 dollars 40 cents", "(D) 7 dollars 90 cents"], answer: 1, exp: "Big Hamburger $5.50。デザート以外を注文すれば紅茶は無料 → $5.50" },
+              { no: 24, q: "Which is the correct statement?", options: ["(A) The price of a tuna salad is the same as that of spaghetti with tomato sauce.", "(B) A Dolphin House Special costs more than spaghetti with meat sauce and mushrooms.", "(C) A French cream pie is more expensive than an Italian cheesecake.", "(D) A large Greek salad is cheaper than spaghetti with tomato sauce."], answer: 3, exp: "Large Greek Salad $6.90 < Spaghetti with Tomato Sauce $7.90" }
+            ]
+          }
+        ]
+      },
+      toeic7: {
+        label: "TOEIC Unit 7",
+        sets: [
+          {
+            id: "t7-p5",
+            title: "Part 5 Incomplete Sentences",
+            instruction: "英文を完成させるのに最も適切な語句を選びましょう。",
+            type: "choice",
+            items: [
+              { no: 13, q: "He wants to buy a computer that has at ______ a 100 petabyte hard-disk.", options: ["(A) least", "(B) mostly", "(C) well", "(D) all"], answer: 0, exp: "at least「少なくとも」" },
+              { no: 14, q: "Please call us if you ______ read the manual before running this software program.", options: ["(A) will not", "(B) have not", "(C) had not", "(D) are not"], answer: 1, exp: "条件の if 節では未来のことも現在（完了）形で表す → have not read" },
+              { no: 15, q: "When ______ the three types of ray?", options: ["(A) he discovers", "(B) has he discovered", "(C) did he discover", "(D) he has discovered"], answer: 2, exp: "When で始まる疑問文に現在完了は使えない → 過去形の疑問文 did he discover" },
+              { no: 16, q: "The spec says that the steel should not contain ______ 0.1% of the substance.", options: ["(A) more", "(B) more than", "(C) less", "(D) not less than"], answer: 1, exp: "should not contain more than 0.1%「0.1%を超えて含んではならない」" }
+            ]
+          },
+          {
+            id: "t7-p6",
+            title: "Part 6 Text Completion",
+            instruction: "ウェブページを読んで、空所に入る最も適切な語句や文を選びましょう。",
+            type: "choice",
+            passages: [
+              { title: "AI Technology", text: "Introduction to AI Technology __(17)__ as an online course for ten years. We have had no fewer than 5,000 students __(18)__ in the course from more than 50 different countries. This course will require around 30 hours to finish, depending on your skills. __(19)__. For further information, please click here." }
+            ],
+            items: [
+              { no: 17, q: "(17)", options: ["(A) has offered", "(B) has been offering", "(C) has been offered", "(D) is offered"], answer: 2, exp: "講座は「提供される」側（受動態）＋ for ten years（継続）→ 現在完了の受動態 has been offered" },
+              { no: 18, q: "(18)", options: ["(A) have registered", "(B) registered", "(C) to register", "(D) registration"], answer: 1, exp: "students registered in the course「講座に登録した学生」（過去分詞の後置修飾）" },
+              { no: 19, q: "(19)", options: ["(A) This position requires at least two years of experience.", "(B) We provide free parking for students.", "(C) You will be satisfied with both the quality and design of our goods.", "(D) Anyone can take this course, anywhere, anytime."], answer: 3, exp: "オンライン講座の説明 → 誰でもどこでもいつでも受講できる" }
+            ]
+          },
+          {
+            id: "t7-p7",
+            title: "Part 7 Reading Comprehension (Multiple Passages)",
+            instruction: "ウェブページとそれについての2つのEメールを読んで、質問の解答として最も適切なものを選びましょう。",
+            type: "choice",
+            passages: [
+              { title: "Web page: Hybrid Car, Hylancer", text: "Hylancer—the hybrid car we developed this April—has attracted a lot of attention because it is friendly to the earth. A hybrid car uses both an engine and a motor to drive the wheels, depending on driving conditions. Under normal driving conditions, the gasoline engine is the main source of power, while the electric motor is only used at low speeds. The amount of dangerous gases produced is cut down because the gasoline engine shuts off at lower speeds—a time when engines generally give off a large amount of dangerous gases.\n\nThe Hylancer is five times as fuel-efficient as any gasoline engine-powered car today, while it gives off only a quarter the amount of carbon dioxide (CO2) and one-thirtieth the amount of other dangerous gases. The Hylancer is expected to go on sale next month." },
+              { title: "E-mail 1　From: Andrew D. Parker / To: Universal Motors / Subject: My interest in Hylancer", text: "Dear Sir or Madam,\nI make a living by driving a cab in Detroit. I mean I manage to make both ends meet on my own instead of depending on any large company. When I attended the motor show held in the city hall last May, I was amazed at the excellent fuel-efficiency, quietness and \"cool\" style of your hybrid cars, especially the Hylancer. Now I think it would be better for me to switch to the Hylancer from my gasoline engine-powered car I've driven for the last 12 years. I hope this change will bring me more customers and benefits. Of course, I'd like to contribute to cleaning the air of our city. I have one question: which do you think is better— to get a hybrid car or an electric car? Please reply asap." },
+              { title: "E-mail 2　From: Amara Ripley, Sales Manager, U. M. / To: Mr. Andrew D. Parker / Subject: Hylancer vs. electric cars", text: "Dear Mr. Andrew D. Parker,\nWe thank you very much for your interest in our hybrid vehicles (HVs), especially the Hylancer. The Hylancer will surely meet your high expectations. Of course, there are an increasing number of other HVs and electric vehicles (EVs) on the market, but at this moment, the Hylancer is your best choice. This is because you can drive the car in just the same way as an ordinary car, while appreciating its low fuel cost, reduced exhaust gases and gorgeous styling. In the long run, however, EVs, which only use electricity without consuming any fossil fuel, may replace some of our HVs, but this will take another ten years. Therefore, we highly recommend that you visit our showroom in downtown Detroit to test-drive the Hylancer. We look forward to seeing you there soon.\nYours sincerely,\nAmara Ripley\nSales Manager\nUniversal Motors" }
+            ],
+            items: [
+              { no: 20, q: "Which of the following is true of the Hylancer under normal driving conditions?", options: ["(A) The electric motor is mainly used.", "(B) The gasoline engine is mainly used.", "(C) The gasoline engine and the electric motor are used in the same way.", "(D) The gasoline engine shuts off."], answer: 1, exp: "Under normal driving conditions, the gasoline engine is the main source of power" },
+              { no: 21, q: "How does a hybrid car cut down the amount of dangerous gases?", options: ["(A) By using an electric motor at lower speeds", "(B) By stopping the gasoline engine at higher speeds", "(C) By using only electricity", "(D) By having a lighter body than an ordinary car"], answer: 0, exp: "低速時はエンジンを止めて電気モーターだけで走る（the electric motor is only used at low speeds / the gasoline engine shuts off at lower speeds）" },
+              { no: 22, q: "What does Mr. Parker do?", options: ["(A) He works for a big company as a taxi driver.", "(B) He works for a city hall as a public employee.", "(C) He is a sales manager at an automobile company.", "(D) He drives a gasoline-powered taxi."], answer: 3, exp: "driving a cab … on my own（個人タクシー）＋ my gasoline engine-powered car" },
+              { no: 23, q: "Which of the following is NOT the reason why Mr. Parker was interested in the Hylancer?", options: ["(A) Its low price", "(B) Its low noise", "(C) Its high fuel-efficiency", "(D) Its style"], answer: 0, exp: "Parker が挙げたのは fuel-efficiency, quietness, \"cool\" style。価格には触れていない" },
+              { no: 24, q: "Which of the following is true of what Amara Ripley wrote?", options: ["(A) An EV is a better choice than the Hylancer at this moment.", "(B) The Hylancer is the best choice at this moment.", "(C) EVs use only a little amount of fossil fuel.", "(D) EVs may be replaced by some of the HVs in another ten years."], answer: 1, exp: "at this moment, the Hylancer is your best choice" }
+            ]
+          }
+        ]
+      }
+    };
+
     /* =========================================================================
        アプリの状態管理
     ========================================================================= */
@@ -1709,6 +2068,8 @@
     const STORAGE_KEY_CARD_PROGRESS = "flashcard_progress_v2";
     const STORAGE_KEY_CARD_LEGACY = "flashcard_known_v1";
     const COOKIE_KEY_CARD = "eng_fc_v2";
+    const STORAGE_KEY_PRACTICE = "practice_progress_v1";
+    const COOKIE_KEY_PRACTICE = "eng_pr_v1";
 
     let state = {
       currentUnit: "unit9",      // 新規追加した Unit 9 を初期表示
@@ -1735,7 +2096,14 @@
       cardRoundTotal: 0,
       cardFlipped: false,
       cardKnownIds: new Set(),
-      cardWrongIds: new Set()
+      cardWrongIds: new Set(),
+      practiceSource: "unit",    // 'unit' | 'toeic6' | 'toeic7'
+      practiceSetId: null,
+      practiceFilterMarked: false,
+      practiceAnswers: {},       // key: "u7-wr2-0" => chosen option index (choice)
+      practiceRevealed: {},      // key: "u7-wr3-b1" / "u7-ar2-0" => true (blanks / flip)
+      practiceOrder: {},         // key: "u9-ar1-0" => { bank, placed, checked, correct }
+      practiceMarkedIds: new Set()
     };
 
     /* =========================================================================
@@ -1772,6 +2140,20 @@
             }
           }
           }
+        }
+        let prPayload = readPracticeCookie();
+        if (!prPayload) {
+          const rawPr = localStorage.getItem(STORAGE_KEY_PRACTICE);
+          if (rawPr) {
+            try { prPayload = JSON.parse(rawPr); } catch (e) { prPayload = null; }
+          }
+        }
+        if (prPayload && Array.isArray(prPayload.m)) {
+          const valid = allPracticeItemIds();
+          prPayload.m.forEach((id) => {
+            if (valid.has(id)) state.practiceMarkedIds.add(id);
+          });
+          savePracticeProgress();
         }
         const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
         if (savedTheme && ["paper", "sepia", "dark"].includes(savedTheme)) {
@@ -1958,6 +2340,7 @@
     function switchUnit(unitKey) {
       state.currentUnit = unitKey;
       state.focusIndex = 0;
+      state.practiceSource = "unit";
       updateHeaderUI();
       renderCurrentView();
       if (state.currentMode === "quiz") resetQuizPoolAndNext();
@@ -2003,7 +2386,7 @@
       });
 
       // モードタブ（下線のみでシンプルに）
-      ["slash", "quiz", "worksheet", "card"].forEach((t) => {
+      ["slash", "quiz", "worksheet", "card", "practice"].forEach((t) => {
         const el = document.getElementById(`tab-${t}`);
         if (el) {
           if (state.currentMode === t) {
@@ -2030,15 +2413,19 @@
 
       if (state.currentMode === "card") {
         document.getElementById("unit-badge").textContent = `${unit.badge}（全${FLASHCARD_DATA[state.currentUnit].length}語）`;
+      } else if (state.currentMode === "practice") {
+        document.getElementById("unit-badge").textContent = currentPracticeData().label;
       } else {
         document.getElementById("unit-badge").textContent = `${unit.badge}（全${unit.sentences.length}文）`;
       }
       document.getElementById("unit-title-en").textContent = unit.titleEn;
       document.getElementById("unit-title-ja").textContent = unit.titleJa;
+      const hideTitles = state.currentMode === "card"
+        || (state.currentMode === "practice" && state.practiceSource !== "unit");
       ["unit-title-en", "unit-title-ja"].forEach((tid) => {
         const el = document.getElementById(tid);
-        el.classList.toggle("hidden", state.currentMode === "card");
-        el.classList.toggle("sm:block", state.currentMode === "card");
+        el.classList.toggle("hidden", hideTitles);
+        el.classList.toggle("sm:block", hideTitles);
       });
 
       updateProgressUI();
@@ -2055,6 +2442,14 @@
         document.getElementById("progress-text").textContent = `覚えた ${known} / ${cards.length}・苦手 ${wrong}`;
         return;
       }
+      if (state.currentMode === "practice") {
+        const srcIds = practiceItemIdsOf(currentPracticeData());
+        const marked = srcIds.filter((id) => state.practiceMarkedIds.has(id)).length;
+        const pct = srcIds.length === 0 ? 0 : Math.round((marked / srcIds.length) * 100);
+        document.getElementById("top-progress-line").style.width = `${pct}%`;
+        document.getElementById("progress-text").textContent = `苦手 ${marked}`;
+        return;
+      }
       const total = unit.sentences.length;
       const done = unit.sentences.filter((s) => state.masteredIds.has(s.id)).length;
       const pct = total === 0 ? 0 : Math.round((done / total) * 100);
@@ -2067,10 +2462,12 @@
       document.getElementById("view-quiz").classList.toggle("hidden", state.currentMode !== "quiz");
       document.getElementById("view-worksheet").classList.toggle("hidden", state.currentMode !== "worksheet");
       document.getElementById("view-card").classList.toggle("hidden", state.currentMode !== "card");
+      document.getElementById("view-practice").classList.toggle("hidden", state.currentMode !== "practice");
 
       if (state.currentMode === "slash") renderSlashMode();
       if (state.currentMode === "worksheet") renderWorksheetMode();
       if (state.currentMode === "card") renderCardMode();
+      if (state.currentMode === "practice") renderPracticeMode();
     }
 
     /* =========================================================================
@@ -2920,6 +3317,442 @@
         </div>
         <p class="sm:hidden text-center text-[11px] text-faint">カードをタップでめくる・左右スワイプでも回答できます</p>
       `;
+    }
+
+    /* =========================================================================
+       モード5：問題（演習プリント集）
+    ========================================================================= */
+    function practiceItemIdsOf(srcData) {
+      const ids = [];
+      srcData.sets.forEach((set) => {
+        if (set.type === "blanks") {
+          set.blanks.forEach((b) => ids.push(`${set.id}-b${b.n}`));
+        } else {
+          set.items.forEach((_, i) => ids.push(`${set.id}-${i}`));
+        }
+      });
+      return ids;
+    }
+
+    function allPracticeItemIds() {
+      const ids = new Set();
+      Object.values(PRACTICE_DATA).forEach((src) => {
+        practiceItemIdsOf(src).forEach((id) => ids.add(id));
+      });
+      return ids;
+    }
+
+    function currentPracticeData() {
+      const key = state.practiceSource === "unit" ? state.currentUnit : state.practiceSource;
+      return PRACTICE_DATA[key];
+    }
+
+    function currentPracticeSet() {
+      const src = currentPracticeData();
+      let set = src.sets.find((st) => st.id === state.practiceSetId);
+      if (!set) {
+        set = src.sets[0];
+        state.practiceSetId = set.id;
+      }
+      return set;
+    }
+
+    function setPracticeSource(src) {
+      state.practiceSource = src;
+      state.practiceSetId = null;
+      updateHeaderUI();
+      renderPracticeMode();
+    }
+
+    function selectPracticeSet(id) {
+      state.practiceSetId = id;
+      renderPracticeMode();
+    }
+
+    function onPracticeFilterChange() {
+      state.practiceFilterMarked = document.getElementById("practice-filter-marked").checked;
+      renderPracticeMode();
+    }
+
+    function resetPracticeSet() {
+      const set = currentPracticeSet();
+      const prefix = `${set.id}-`;
+      Object.keys(state.practiceAnswers).forEach((k) => {
+        if (k.startsWith(prefix)) delete state.practiceAnswers[k];
+      });
+      Object.keys(state.practiceRevealed).forEach((k) => {
+        if (k.startsWith(prefix)) delete state.practiceRevealed[k];
+      });
+      Object.keys(state.practiceOrder).forEach((k) => {
+        if (k.startsWith(prefix)) delete state.practiceOrder[k];
+      });
+      renderPracticeMode();
+    }
+
+    function readPracticeCookie() {
+      try {
+        const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${COOKIE_KEY_PRACTICE}=([^;]*)`));
+        if (!m) return null;
+        return JSON.parse(decodeURIComponent(m[1]));
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function savePracticeProgress() {
+      const json = JSON.stringify({ m: [...state.practiceMarkedIds] });
+      try {
+        document.cookie = `${COOKIE_KEY_PRACTICE}=${encodeURIComponent(json)}; max-age=31536000; path=/; SameSite=Lax`;
+      } catch (err) {
+        console.warn("Cookie save skipped:", err);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEY_PRACTICE, json);
+      } catch (err) {
+        console.warn("Storage save skipped:", err);
+      }
+    }
+
+    function togglePracticeMark(id) {
+      if (state.practiceMarkedIds.has(id)) {
+        state.practiceMarkedIds.delete(id);
+      } else {
+        state.practiceMarkedIds.add(id);
+        if (state.currentMode === "practice") {
+          const filterEl = document.getElementById("practice-filter-marked");
+          if (filterEl && filterEl.checked) {
+            renderPracticeMode();
+          }
+        }
+      }
+      savePracticeProgress();
+      updateHeaderUI();
+    }
+
+    function practiceMarkBtn(id, showLabel) {
+      const marked = state.practiceMarkedIds.has(id);
+      const label = showLabel
+        ? (marked ? "苦手から外す" : "苦手に追加")
+        : `${marked ? "★" : "☆"} わからなかった`;
+      const style = marked ? "color: var(--wrong);" : "";
+      return `<button type="button" onclick="event.stopPropagation(); togglePracticeMark('${id}')" class="text-[11px] text-faint hover:text-main transition-colors shrink-0 py-1" style="${style}">${label}</button>`;
+    }
+
+    function renderPracticeMode() {
+      const src = currentPracticeData();
+      const set = currentPracticeSet();
+      const filterEl = document.getElementById("practice-filter-marked");
+      if (filterEl) filterEl.checked = state.practiceFilterMarked;
+
+      const chip = (onclick, label, active) => `
+        <button
+          type="button"
+          onclick="${onclick}"
+          class="px-3 py-1.5 rounded-lg border font-medium whitespace-nowrap transition-colors"
+          style="${active
+            ? "background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);"
+            : "background-color: var(--bg-surface); border-color: var(--border-soft); color: var(--text-muted);"}"
+        >${escapeHtml(label)}</button>`;
+
+      document.getElementById("practice-sources").innerHTML = [
+        chip(`setPracticeSource('unit')`, PRACTICE_DATA[state.currentUnit].label, state.practiceSource === "unit"),
+        chip(`setPracticeSource('toeic6')`, PRACTICE_DATA.toeic6.label, state.practiceSource === "toeic6"),
+        chip(`setPracticeSource('toeic7')`, PRACTICE_DATA.toeic7.label, state.practiceSource === "toeic7"),
+      ].join("");
+
+      document.getElementById("practice-sets").innerHTML = src.sets
+        .map((st) => chip(`selectPracticeSet('${st.id}')`, st.title, st.id === set.id))
+        .join("");
+
+      document.getElementById("practice-instruction").textContent = set.instruction;
+
+      let body = "";
+      if (set.passages) {
+        body += set.passages.map((p) => `
+          <details class="surface rounded-2xl border p-4 sm:p-5" open>
+            <summary class="text-sm font-bold text-main cursor-pointer select-none">${escapeHtml(p.title)}</summary>
+            <p class="mt-3 text-sm text-main leading-relaxed whitespace-pre-line">${escapeHtml(p.text)}</p>
+          </details>
+        `).join("");
+      }
+
+      if (set.type === "choice") body += renderPracticeChoice(set);
+      if (set.type === "blanks") body += renderPracticeBlanks(set);
+      if (set.type === "flip") body += renderPracticeFlip(set);
+      if (set.type === "order") body += renderPracticeOrder(set);
+
+      document.getElementById("practice-body").innerHTML = body;
+    }
+
+    function practiceFilteredItems(set) {
+      return set.items
+        .map((item, i) => ({ item, i }))
+        .filter(({ i }) => !state.practiceFilterMarked || state.practiceMarkedIds.has(`${set.id}-${i}`));
+    }
+
+    function renderPracticeChoice(set) {
+      const items = practiceFilteredItems(set);
+      const answered = set.items.filter((_, i) => `${set.id}-${i}` in state.practiceAnswers).length;
+      const correct = set.items.filter((_, i) => state.practiceAnswers[`${set.id}-${i}`] === set.items[i].answer).length;
+      let html = `<p class="text-xs font-medium text-muted">正答 ${correct} / ${answered}（全${set.items.length}問）</p>`;
+      if (items.length === 0) {
+        return html + `<p class="text-sm text-faint py-4 text-center">苦手に登録された項目はありません</p>`;
+      }
+      html += items.map(({ item, i }) => {
+        const id = `${set.id}-${i}`;
+        const chosen = state.practiceAnswers[id];
+        const isAnswered = chosen !== undefined;
+        const noLabel = item.no !== undefined ? item.no : i + 1;
+        const isBlankOnly = /^\(\d+\)$/.test(item.q);
+        const compact = item.options.every((o) => o.length <= 3);
+        const optionsHtml = item.options.map((opt, oi) => {
+          let style = "";
+          let cls = "border border-soft surface text-main transition-colors font-medium";
+          if (isAnswered) {
+            if (oi === item.answer) {
+              style = "background-color: var(--done-soft); border-color: var(--done); color: var(--done);";
+            } else if (oi === chosen) {
+              style = "background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong);";
+            } else {
+              cls += " opacity-40";
+            }
+          }
+          if (compact) {
+            cls += " rounded-lg text-sm flex items-center justify-center";
+            style += "min-width: 44px; min-height: 44px; padding: 0 10px;" + style;
+          } else {
+            cls += " rounded-xl text-sm sm:text-[15px] w-full text-left px-4 py-3 leading-snug";
+          }
+          return `<button type="button" ${isAnswered ? "disabled" : `onclick="answerPracticeChoice('${set.id}', ${i}, ${oi})"`} class="${cls}" style="${style}">${escapeHtml(opt)}</button>`;
+        }).join("");
+        const optionsWrap = compact
+          ? `<div class="flex flex-wrap gap-2 mt-3">${optionsHtml}</div>`
+          : `<div class="space-y-2 mt-3">${optionsHtml}</div>`;
+
+        let fb = "";
+        if (isAnswered) {
+          const ok = chosen === item.answer;
+          fb = `
+            <div class="mt-3 p-3 rounded-xl border text-xs sm:text-sm" style="border-color: var(--border-soft); background-color: var(--bg-subtle);">
+              <span class="font-bold" style="color: ${ok ? "var(--done)" : "var(--wrong)"};">${ok ? "正解" : "不正解"}</span>
+              ${ok ? "" : `<span class="text-muted">正解: ${escapeHtml(item.options[item.answer])}</span>`}
+              ${item.exp ? `<p class="text-muted mt-1 leading-relaxed">${escapeHtml(item.exp)}</p>` : ""}
+            </div>`;
+        }
+
+        return `
+          <div class="surface rounded-2xl border p-4 sm:p-5">
+            <div class="flex items-start justify-between gap-2">
+              <p class="text-sm sm:text-[15px] font-medium text-main leading-relaxed">
+                <span class="text-xs font-bold text-accent mr-1.5">${escapeHtml(String(noLabel))}</span>${isBlankOnly ? `<span class="text-muted">空所 ${escapeHtml(item.q)}</span>` : escapeHtml(item.q)}
+              </p>
+              ${isAnswered ? practiceMarkBtn(id, true) : ""}
+            </div>
+            ${optionsWrap}
+            ${fb}
+          </div>`;
+      }).join("");
+      return html;
+    }
+
+    function answerPracticeChoice(setId, itemIdx, optIdx) {
+      const set = currentPracticeSet();
+      if (set.id !== setId) return;
+      const id = `${set.id}-${itemIdx}`;
+      if (id in state.practiceAnswers) return;
+      state.practiceAnswers[id] = optIdx;
+      if (optIdx !== set.items[itemIdx].answer) {
+        state.practiceMarkedIds.add(id);
+        savePracticeProgress();
+      }
+      renderPracticeMode();
+      updateHeaderUI();
+    }
+
+    function renderPracticeBlanks(set) {
+      let blankList = set.blanks;
+      if (state.practiceFilterMarked) {
+        blankList = blankList.filter((b) => state.practiceMarkedIds.has(`${set.id}-b${b.n}`));
+      }
+      const textHtml = escapeHtml(set.text).replace(/\[\[(\d+)\]\]/g, (_, n) => {
+        const b = set.blanks.find((x) => String(x.n) === String(n));
+        if (!b) return `(${n})`;
+        const key = `${set.id}-b${b.n}`;
+        const open = !!state.practiceRevealed[key];
+        const shown = open ? `${b.answer}` : `${b.hint}＿＿＿`;
+        return `<button type="button" onclick="togglePracticeBlank('${set.id}', ${b.n})" class="cloze-slot ${open ? "cloze-slot-open" : "cloze-slot-closed"}">(${b.n}) ${shown}</button>`;
+      });
+      const rows = blankList.map((b) => {
+        const key = `${set.id}-b${b.n}`;
+        const open = !!state.practiceRevealed[key];
+        return `
+          <div class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-soft surface">
+            <span class="text-sm text-main font-medium shrink-0">(${b.n}) ${escapeHtml(b.hint)}…</span>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="togglePracticeBlank('${set.id}', ${b.n})" class="text-xs text-accent font-medium py-1">${open ? "隠す" : "答えを見る"}</button>
+              ${practiceMarkBtn(key, false)}
+            </div>
+          </div>`;
+      }).join("");
+      return `
+        <div class="surface rounded-2xl border p-5 sm:p-6">
+          <p class="text-sm sm:text-base text-main leading-[2.2]">${textHtml}</p>
+        </div>
+        <div class="space-y-2">${rows}</div>`;
+    }
+
+    function togglePracticeBlank(setId, n) {
+      const key = `${setId}-b${n}`;
+      state.practiceRevealed[key] = !state.practiceRevealed[key];
+      renderPracticeMode();
+    }
+
+    function renderPracticeFlip(set) {
+      const items = practiceFilteredItems(set);
+      if (items.length === 0) {
+        return `<p class="text-sm text-faint py-4 text-center">苦手に登録された項目はありません</p>`;
+      }
+      return items.map(({ item, i }) => {
+        const id = `${set.id}-${i}`;
+        const open = !!state.practiceRevealed[id];
+        return `
+          <div
+            class="surface rounded-2xl border p-5 sm:p-6 cursor-pointer select-none"
+            onclick="togglePracticeFlip('${set.id}', ${i})"
+            role="button"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <p class="text-sm sm:text-[15px] text-main leading-relaxed">${escapeHtml(item.q)}</p>
+                <p class="mt-2 text-xs text-faint">${escapeHtml(item.hint)}＿＿＿＿＿＿</p>
+                ${open ? `<p class="mt-2 text-xl font-bold text-accent">${escapeHtml(item.answer)}</p>` : ""}
+              </div>
+              ${practiceMarkBtn(id, false)}
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function togglePracticeFlip(setId, i) {
+      const id = `${setId}-${i}`;
+      state.practiceRevealed[id] = !state.practiceRevealed[id];
+      renderPracticeMode();
+    }
+
+    function practiceOrderState(setId, i, tokens) {
+      const id = `${setId}-${i}`;
+      if (!state.practiceOrder[id]) {
+        state.practiceOrder[id] = {
+          bank: shuffleArray(tokens.map((_, ti) => ti)),
+          placed: [],
+          checked: false,
+          correct: false
+        };
+      }
+      return state.practiceOrder[id];
+    }
+
+    function renderPracticeOrder(set) {
+      const items = practiceFilteredItems(set);
+      if (items.length === 0) {
+        return `<p class="text-sm text-faint py-4 text-center">苦手に登録された項目はありません</p>`;
+      }
+      return items.map(({ item, i }) => {
+        const id = `${set.id}-${i}`;
+        const st = practiceOrderState(set.id, i, item.tokens);
+        const placedChips = st.placed.map((ti, pi) => {
+          let label = item.tokens[ti];
+          if (!item.prefix && pi === 0) label = label.charAt(0).toUpperCase() + label.slice(1);
+          return `<button type="button" onclick="practiceOrderRemove('${set.id}', ${i}, ${pi})" class="px-3 rounded-full border text-sm font-medium transition-colors" style="min-height: 40px; background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);">${escapeHtml(label)}</button>`;
+        }).join("");
+        const bankChips = st.bank.map((ti) => {
+          return `<button type="button" onclick="practiceOrderAdd('${set.id}', ${i}, ${ti})" ${st.checked && st.correct ? "disabled" : ""} class="px-3 rounded-full border border-soft surface text-sm font-medium text-main transition-colors" style="min-height: 40px;">${escapeHtml(item.tokens[ti])}</button>`;
+        }).join("");
+
+        const allPlaced = st.bank.length === 0;
+        const lineStyle = st.checked
+          ? (st.correct ? "border-color: var(--done);" : "border-color: var(--wrong);")
+          : "border-color: var(--border-strong);";
+        const checkBtn = st.checked && !st.correct
+          ? `<button type="button" onclick="practiceOrderRetry('${set.id}', ${i})" class="px-4 py-2 rounded-xl border text-sm font-semibold" style="background-color: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong);">もう一度</button>`
+          : `<button type="button" onclick="checkPracticeOrder('${set.id}', ${i})" ${allPlaced && !st.checked ? "" : "disabled"} class="px-4 py-2 rounded-xl border text-sm font-semibold ${allPlaced && !st.checked ? "" : "opacity-40"}" style="background-color: var(--accent-soft); border-color: var(--accent-border); color: var(--accent);">答え合わせ</button>`;
+
+        let fb = "";
+        if (st.checked) {
+          const full = practiceOrderSentence(item);
+          fb = st.correct
+            ? `<p class="mt-3 text-sm font-bold" style="color: var(--done);">正解 — ${escapeHtml(full)}</p>`
+            : `<p class="mt-3 text-sm font-bold" style="color: var(--wrong);">正解: ${escapeHtml(full)}</p>`;
+        }
+
+        return `
+          <div class="surface rounded-2xl border p-4 sm:p-5">
+            <div class="flex items-start justify-between gap-2">
+              <p class="text-sm text-muted leading-relaxed">${escapeHtml(item.ja)}</p>
+              ${practiceMarkBtn(id, false)}
+            </div>
+            <div class="flex flex-wrap items-end gap-1.5 border-b border-dashed mt-3 pb-2" style="min-height: 48px; ${lineStyle}">
+              ${item.prefix ? `<span class="text-sm text-muted">${escapeHtml(item.prefix)}</span>` : ""}
+              ${placedChips}
+              ${item.suffix ? `<span class="text-sm text-muted">${escapeHtml(item.suffix)}</span>` : ""}
+            </div>
+            <div class="flex flex-wrap gap-1.5 mt-3">${bankChips}</div>
+            <div class="mt-3 flex items-center gap-2">${checkBtn}</div>
+            ${fb}
+          </div>`;
+      }).join("");
+    }
+
+    function practiceOrderSentence(item) {
+      let sent = (item.prefix ? item.prefix + " " : "") + item.answer.join(" ") + (item.suffix ? " " + item.suffix : "");
+      if (!item.prefix) sent = sent.charAt(0).toUpperCase() + sent.slice(1);
+      return sent.replace(/\s+\./g, ".").trim();
+    }
+
+    function practiceOrderAdd(setId, i, ti) {
+      const set = currentPracticeSet();
+      const st = practiceOrderState(setId, i, set.items[i].tokens);
+      if (st.checked && st.correct) return;
+      if (st.checked) st.checked = false;
+      st.bank = st.bank.filter((x) => x !== ti);
+      st.placed.push(ti);
+      renderPracticeMode();
+    }
+
+    function practiceOrderRemove(setId, i, pi) {
+      const set = currentPracticeSet();
+      const st = practiceOrderState(setId, i, set.items[i].tokens);
+      if (st.checked && st.correct) return;
+      if (st.checked) st.checked = false;
+      const ti = st.placed.splice(pi, 1)[0];
+      st.bank.push(ti);
+      renderPracticeMode();
+    }
+
+    function checkPracticeOrder(setId, i) {
+      const set = currentPracticeSet();
+      const item = set.items[i];
+      const st = practiceOrderState(setId, i, item.tokens);
+      if (st.bank.length !== 0 || st.checked) return;
+      st.checked = true;
+      st.correct = st.placed.map((ti) => item.tokens[ti]).join("\u0000") === item.answer.join("\u0000");
+      if (!st.correct) {
+        state.practiceMarkedIds.add(`${setId}-${i}`);
+        savePracticeProgress();
+      }
+      renderPracticeMode();
+      updateHeaderUI();
+    }
+
+    function practiceOrderRetry(setId, i) {
+      const set = currentPracticeSet();
+      const item = set.items[i];
+      const st = practiceOrderState(setId, i, item.tokens);
+      st.bank = shuffleArray(item.tokens.map((_, ti) => ti));
+      st.placed = [];
+      st.checked = false;
+      st.correct = false;
+      renderPracticeMode();
     }
 
     /* =========================================================================
